@@ -1,3 +1,4 @@
+
 <?php
 
 namespace Database\Seeders;
@@ -11,58 +12,137 @@ class UsuariosInstitucionalesSeeder extends Seeder
 {
     public function run(): void
     {
-        $adminPassword = env('ATLAS_ADMIN_PASSWORD');
-        $direccionPassword = env('ATLAS_DIRECCION_PASSWORD');
-        if (!$adminPassword || !$direccionPassword || strlen($adminPassword) < 16 || strlen($direccionPassword) < 16 || $adminPassword === $direccionPassword) {
-            throw new RuntimeException('Configure ATLAS_ADMIN_PASSWORD y ATLAS_DIRECCION_PASSWORD, distintas y de 16 caracteres o más, antes de ejecutar los seeders.');
+        $adminPassword = $this->solicitarPassword('Administrador');
+        $direccionPassword = $this->solicitarPassword('Dirección');
+
+        if ($adminPassword === $direccionPassword) {
+            throw new RuntimeException(
+                'Las contraseñas de Administrador y Dirección deben ser diferentes.'
+            );
         }
+
         DB::transaction(function () use ($adminPassword, $direccionPassword): void {
-            $this->crearUsuario('ATLAS_ADMIN_USERNAME', 'atlas.admin', 'Superusuario', 'ATLAS', 'ADMINISTRADOR', $adminPassword);
-            $this->crearUsuario('ATLAS_DIRECCION_USERNAME', 'Raquel.Reyes', 'Eneida Raquel', 'Reyes Rojas', 'DIRECCION', $direccionPassword);
+            $this->crearUsuario(
+                'atlas.admin',
+                'Superusuario',
+                'ATLAS',
+                'ADMINISTRADOR',
+                $adminPassword
+            );
+
+            $this->crearUsuario(
+                'Raquel.Reyes',
+                'Eneida Raquel',
+                'Reyes Rojas',
+                'DIRECCION',
+                $direccionPassword
+            );
         });
     }
 
-    private function crearUsuario(string $variableUsuario, string $prefijo, string $nombres, string $apellidos, string $rolCodigo, string $password): void
+    private function solicitarPassword(string $rol): string
     {
-        $nombreUsuario = env($variableUsuario);
-        if (!$nombreUsuario) {
-            $existente = DB::table('personas')->where('nombres', $nombres)->where('apellidos', $apellidos)->first();
-            if ($existente) {
-                $nombreUsuario = DB::table('usuarios')->where('persona_id', $existente->id)->value('nombre_usuario');
+        if (!$this->command || !$this->command->input->isInteractive()) {
+            throw new RuntimeException(
+                "La creación de {$rol} requiere una terminal interactiva."
+            );
+        }
+
+        do {
+            $password = $this->command->secret(
+                "Ingrese la contraseña para {$rol} (mínimo 16 caracteres)"
+            );
+
+            if (!is_string($password) || strlen($password) < 16) {
+                $this->command->error(
+                    'La contraseña debe tener al menos 16 caracteres.'
+                );
+                continue;
             }
+
+            $confirmacion = $this->command->secret(
+                "Confirme la contraseña para {$rol}"
+            );
+
+            if ($password !== $confirmacion) {
+                $this->command->error(
+                    'Las contraseñas no coinciden.'
+                );
+                continue;
+            }
+
+            return $password;
+        } while (true);
+    }
+
+    private function crearUsuario(
+        string $nombreUsuario,
+        string $nombres,
+        string $apellidos,
+        string $rolCodigo,
+        string $password
+    ): void {
+        $rolId = DB::table('roles')
+            ->where('codigo', $rolCodigo)
+            ->value('id');
+
+        if (!$rolId) {
+            throw new RuntimeException(
+                "No existe el rol {$rolCodigo}."
+            );
         }
-        if (!$nombreUsuario) {
-            do {
-                $nombreUsuario = $prefijo . random_int(1000, 9999);
-            } while (DB::table('usuarios')->where('nombre_usuario', $nombreUsuario)->exists());
-        }
-        $persona = DB::table('personas')->where('nombres', $nombres)->where('apellidos', $apellidos)->first();
+
+        $persona = DB::table('personas')
+            ->where('nombres', $nombres)
+            ->where('apellidos', $apellidos)
+            ->first();
+
         if (!$persona) {
             $personaId = DB::table('personas')->insertGetId([
-                'nombres' => $nombres, 'apellidos' => $apellidos,
-                'created_at' => now(), 'updated_at' => now(),
+                'nombres' => $nombres,
+                'apellidos' => $apellidos,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         } else {
             $personaId = $persona->id;
         }
-        $usuario = DB::table('usuarios')->where('persona_id', $personaId)->first();
+
+        $usuario = DB::table('usuarios')
+            ->where('persona_id', $personaId)
+            ->first();
+
         if (!$usuario) {
-            if (DB::table('usuarios')->where('nombre_usuario', $nombreUsuario)->exists()) {
-                throw new RuntimeException("El nombre de usuario {$nombreUsuario} ya está ocupado.");
+            if (
+                DB::table('usuarios')
+                    ->where('nombre_usuario', $nombreUsuario)
+                    ->exists()
+            ) {
+                throw new RuntimeException(
+                    "El nombre de usuario {$nombreUsuario} ya está ocupado."
+                );
             }
+
             $usuarioId = DB::table('usuarios')->insertGetId([
-                'persona_id' => $personaId, 'nombre_usuario' => $nombreUsuario,
-                'password' => Hash::make($password), 'activo' => true,
-                'created_at' => now(), 'updated_at' => now(),
+                'persona_id' => $personaId,
+                'nombre_usuario' => $nombreUsuario,
+                'password' => Hash::make($password),
+                'activo' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         } else {
             $usuarioId = $usuario->id;
         }
-        $rolId = DB::table('roles')->where('codigo', $rolCodigo)->value('id');
+
         DB::table('usuario_roles')->insertOrIgnore([
-            'usuario_id' => $usuarioId, 'rol_id' => $rolId,
+            'usuario_id' => $usuarioId,
+            'rol_id' => $rolId,
             'created_at' => now(),
         ]);
-        $this->command?->info("Cuenta {$rolCodigo}: {$nombreUsuario} (contraseña no mostrada; no se modifica si la cuenta ya existe)");
+
+        $this->command?->info(
+            "Cuenta {$rolCodigo}: {$nombreUsuario} configurada correctamente."
+        );
     }
 }
