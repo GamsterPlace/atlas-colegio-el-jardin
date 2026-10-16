@@ -11,6 +11,12 @@ class UsuariosInstitucionalesSeeder extends Seeder
 {
     public function run(): void
     {
+        if (!$this->command) {
+            throw new RuntimeException(
+                'Este seeder debe ejecutarse mediante Artisan en una terminal interactiva.'
+            );
+        }
+
         $adminPassword = $this->solicitarPassword('Administrador');
         $direccionPassword = $this->solicitarPassword('Dirección');
 
@@ -20,7 +26,10 @@ class UsuariosInstitucionalesSeeder extends Seeder
             );
         }
 
-        DB::transaction(function () use ($adminPassword, $direccionPassword): void {
+        DB::transaction(function () use (
+            $adminPassword,
+            $direccionPassword
+        ): void {
             $this->crearUsuario(
                 'atlas.admin',
                 'Superusuario',
@@ -41,7 +50,7 @@ class UsuariosInstitucionalesSeeder extends Seeder
 
     private function solicitarPassword(string $rol): string
     {
-        if (!$this->command || !$this->command->input->isInteractive()) {
+        if (!$this->command) {
             throw new RuntimeException(
                 "La creación de {$rol} requiere una terminal interactiva."
             );
@@ -56,6 +65,7 @@ class UsuariosInstitucionalesSeeder extends Seeder
                 $this->command->error(
                     'La contraseña debe tener al menos 16 caracteres.'
                 );
+
                 continue;
             }
 
@@ -67,6 +77,7 @@ class UsuariosInstitucionalesSeeder extends Seeder
                 $this->command->error(
                     'Las contraseñas no coinciden.'
                 );
+
                 continue;
             }
 
@@ -112,11 +123,11 @@ class UsuariosInstitucionalesSeeder extends Seeder
             ->first();
 
         if (!$usuario) {
-            if (
-                DB::table('usuarios')
-                    ->where('nombre_usuario', $nombreUsuario)
-                    ->exists()
-            ) {
+            $nombreOcupado = DB::table('usuarios')
+                ->where('nombre_usuario', $nombreUsuario)
+                ->exists();
+
+            if ($nombreOcupado) {
                 throw new RuntimeException(
                     "El nombre de usuario {$nombreUsuario} ya está ocupado."
                 );
