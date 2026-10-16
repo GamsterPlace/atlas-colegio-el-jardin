@@ -1,0 +1,12 @@
+@extends('layouts.direccion')
+@section('title','Control académico')
+@section('role','Dirección')
+@section('module-title','Notas · Control académico')
+@section('dashboard-url',route('direccion.dashboard'))
+@section('content')
+@include('direccion.notas.partials.estilos')
+<div class="container-fluid py-3 atlas-notas"><div class="ai-header"><div><h2>Control académico</h2><p class="ai-muted">Supervisión de actividades de evaluación y cierres de períodos. Consulta sin alteración de calificaciones.</p></div></div>
+@include('direccion.notas.partials.filtros')
+<div class="ai-card"><div class="ai-card-head"><strong>Actividades de evaluación</strong><span class="ai-count">{{ $actividades->total() }} actividades</span></div><div class="ai-table-wrap"><table class="ai-table"><thead><tr><th>Actividad</th><th>Materia</th><th>Período</th><th>Fecha</th><th>Punteo máximo</th><th>Calificaciones</th><th>Publicada</th></tr></thead><tbody>@forelse($actividades as $a)<tr><td><strong>{{ $a->titulo }}</strong></td><td>{{ $a->carga_academica?->pensum_curso?->curso?->nombre ?? 'Materia' }}<div class="ai-muted">{{ $a->carga_academica?->seccion?->grado?->nombre }} / {{ $a->carga_academica?->seccion?->nombre }}</div></td><td>{{ $a->periodo_academico?->nombre }}</td><td>{{ $a->fecha?->format('d/m/Y') ?? '—' }}</td><td>{{ $a->punteo_maximo }}</td><td>{{ $a->registros_calificacion_count }}</td><td><span class="ai-tag {{ $a->publicada ? '' : 'off' }}">{{ $a->publicada ? 'Sí' : 'No' }}</span></td></tr>@empty<tr><td colspan="7" class="ai-empty">No hay actividades para los filtros seleccionados.</td></tr>@endforelse</tbody></table></div><div class="ai-footer">{{ $actividades->links() }}</div></div>
+<div class="ai-card"><div class="ai-card-head"><strong>Cierres académicos registrados</strong><span class="ai-count">Últimos {{ $cierres->count() }} registros</span></div><div class="ai-table-wrap"><table class="ai-table"><thead><tr><th>Materia</th><th>Período</th><th>Fecha de cierre</th><th>Motivo</th></tr></thead><tbody>@forelse($cierres as $cierre)<tr><td>{{ $cierre->carga_academica?->pensum_curso?->curso?->nombre ?? 'Materia' }}</td><td>{{ $cierre->periodo_academico?->nombre }}</td><td>{{ $cierre->cerrado_at?->format('d/m/Y H:i') }}</td><td>{{ $cierre->motivo ?: '—' }}</td></tr>@empty<tr><td colspan="4" class="ai-empty">No hay cierres académicos registrados.</td></tr>@endforelse</tbody></table></div></div></div>
+@endsection

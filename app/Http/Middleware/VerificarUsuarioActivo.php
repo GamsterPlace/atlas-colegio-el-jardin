@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
+
+class VerificarUsuarioActivo
+{
+    public function handle(
+        Request $request,
+        Closure $next
+    ): Response {
+        $usuario = $request->user();
+
+        if (!$usuario) {
+            return redirect()->route('login');
+        }
+
+        if (
+            !$usuario->activo ||
+            $usuario->deleted_at !== null
+        ) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()
+                ->route('login')
+                ->withErrors([
+                    'nombre_usuario' =>
+                        'Su cuenta no está habilitada para acceder al sistema.',
+                ]);
+        }
+
+        return $next($request);
+    }
+}

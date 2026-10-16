@@ -1,0 +1,725 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+    --navy: #14233F;
+    --navy-dark: #101B32;
+    --blue: #0868ED;
+    --red: #B3263E;
+    --green: #78B943;
+    --text: #25334B;
+    --muted: #78859A;
+    --border: #E3E8F0;
+    --font: 'DM Sans', sans-serif;
+    --heading: 'Plus Jakarta Sans', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font);
+    color: var(--text);
+    background: #EDF2F9;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* FONDO */
+
+.login-shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 48px 24px;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse 700px 550px at 5% 10%,
+            rgba(8, 104, 237, .12),
+            transparent 75%
+        ),
+        radial-gradient(
+            ellipse 750px 570px at 98% 92%,
+            rgba(179, 38, 62, .075),
+            transparent 75%
+        ),
+        linear-gradient(
+            125deg,
+            #EAF0F9 0%,
+            #F7F9FD 50%,
+            #E9EFF8 100%
+        );
+}
+
+.login-shell::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -350px;
+    right: -270px;
+    width: 900px;
+    height: 900px;
+    border: 1px solid rgba(8, 104, 237, .11);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 75px rgba(8, 104, 237, .025),
+        0 0 0 150px rgba(8, 104, 237, .015),
+        0 0 0 225px rgba(8, 104, 237, .01);
+    pointer-events: none;
+}
+
+.login-shell::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: -420px;
+    left: -350px;
+    width: 850px;
+    height: 850px;
+    border: 1px solid rgba(20, 35, 63, .08);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 90px rgba(20, 35, 63, .018),
+        0 0 0 180px rgba(20, 35, 63, .01);
+    pointer-events: none;
+}
+
+/* TARJETA */
+
+.login-card {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 43% 57%;
+    width: 100%;
+    max-width: 1120px;
+    min-height: 660px;
+    overflow: hidden;
+    border: 1px solid rgba(218, 227, 239, .9);
+    border-radius: 23px;
+    background: #FFFFFF;
+    box-shadow:
+        0 35px 95px rgba(20, 35, 63, .13),
+        0 8px 22px rgba(20, 35, 63, .045);
+}
+
+/* PANEL DEL COLEGIO */
+
+.institution-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 35px 38px 28px;
+    background: linear-gradient(
+        150deg,
+        #192E53 0%,
+        #14233F 52%,
+        #101B32 100%
+    );
+    color: #FFFFFF;
+}
+
+.institution-panel::before {
+    content: '';
+    position: absolute;
+    top: -180px;
+    right: -180px;
+    width: 470px;
+    height: 470px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 65px rgba(255, 255, 255, .018),
+        0 0 0 130px rgba(255, 255, 255, .012);
+    pointer-events: none;
+}
+
+.institution-panel::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(
+        90deg,
+        var(--red) 0%,
+        var(--red) 45%,
+        #E9DFCF 45%,
+        #E9DFCF 75%,
+        var(--green) 75%
+    );
+}
+
+/* ENLACE DE REGRESO DENTRO DEL PANEL */
+
+.institution-top {
+    position: relative;
+    z-index: 1;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #C3D2E8;
+    font-size: 12px;
+    font-weight: 700;
+    transition: color .2s ease;
+}
+
+.back-link svg {
+    width: 17px;
+    height: 17px;
+}
+
+.back-link:hover {
+    color: #FFFFFF;
+}
+
+/* IDENTIDAD DEL COLEGIO */
+
+.institution-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 35px 0;
+}
+
+.institution-emblem {
+    display: grid;
+    place-items: center;
+    width: 195px;
+    height: 195px;
+    margin: 0 auto 30px;
+    padding: 10px;
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, .16);
+}
+
+.institution-emblem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.institution-label {
+    display: block;
+    margin-bottom: 16px;
+    color: #9DBBE8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.institution-content h1 {
+    margin: 0;
+    font-family: var(--heading);
+    font-size: clamp(28px, 3vw, 39px);
+    font-weight: 800;
+    letter-spacing: -1.3px;
+    line-height: 1.25;
+}
+
+.institution-content p {
+    margin: 15px 0 0;
+    color: #C1D0E5;
+    font-size: 13px;
+}
+
+.institution-footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #A6BAD5;
+    font-size: 11px;
+}
+
+.institution-footer-mark {
+    width: 19px;
+    height: 2px;
+    background: #5C9DF4;
+}
+
+/* PANEL DEL FORMULARIO */
+
+.form-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: 45px clamp(38px, 5vw, 75px) 25px;
+    background:
+        linear-gradient(
+            180deg,
+            #FFFFFF 0%,
+            #FFFFFF 75%,
+            #FBFCFF 100%
+        );
+}
+
+.form-panel-inner {
+    width: 100%;
+    max-width: 430px;
+    margin: auto;
+}
+
+.form-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.form-atlas-logo {
+    display: block;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 22px;
+    object-fit: contain;
+}
+
+.form-heading h2 {
+    margin: 0;
+    color: var(--navy);
+    font-family: var(--heading);
+    font-size: clamp(28px, 3vw, 35px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+/* CAMPOS */
+
+.form-field {
+    margin-bottom: 23px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 10px;
+    color: #2C3950;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.field-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.field-control > svg {
+    position: absolute;
+    left: 17px;
+    width: 19px;
+    height: 19px;
+    color: #97A4B7;
+    pointer-events: none;
+}
+
+.field-control input {
+    display: block;
+    width: 100%;
+    height: 54px;
+    padding: 0 48px 0 49px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    background: #FBFCFE;
+    color: var(--text);
+    font-size: 13px;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.field-control input::placeholder {
+    color: #A3ADBD;
+}
+
+.field-control input:focus {
+    border-color: var(--blue);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 4px rgba(8, 104, 237, .08);
+}
+
+.field-control:focus-within > svg {
+    color: var(--blue);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #8794A8;
+}
+
+.password-toggle svg {
+    width: 19px;
+    height: 19px;
+}
+
+.password-toggle:hover {
+    background: #EAF2FF;
+    color: var(--blue);
+}
+
+.form-recovery {
+    display: flex;
+    justify-content: flex-end;
+    margin: -4px 0 29px;
+}
+
+.form-recovery button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.form-recovery button:hover {
+    text-decoration: underline;
+}
+
+.submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 54px;
+    padding: 0 20px 0 23px;
+    border: 1px solid var(--blue);
+    border-radius: 10px;
+    background: var(--blue);
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 800;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.submit-button svg {
+    width: 19px;
+    height: 19px;
+}
+
+.submit-button:not(:disabled):hover {
+    background: #0758CC;
+    transform: translateY(-1px);
+}
+
+.submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.form-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 26px;
+    color: #98A3B3;
+    font-size: 11px;
+}
+
+.form-security svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* PIE DENTRO DEL CUADRO */
+
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding-top: 25px;
+    color: #98A4B4;
+    font-size: 10px;
+}
+
+.form-footer strong {
+    color: #52627B;
+    font-weight: 800;
+}
+
+/* RECUPERACIÓN */
+
+.recovery-dialog {
+    width: calc(100% - 32px);
+    max-width: 430px;
+    padding: 0;
+    border: 0;
+    border-radius: 17px;
+    background: #FFFFFF;
+    color: var(--text);
+    box-shadow: 0 30px 90px rgba(10, 25, 48, .25);
+}
+
+.recovery-dialog::backdrop {
+    background: rgba(13, 26, 47, .65);
+    backdrop-filter: blur(3px);
+}
+
+.recovery-body {
+    position: relative;
+    padding: 37px;
+}
+
+.recovery-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #8793A3;
+    font-size: 28px;
+}
+
+.recovery-symbol {
+    display: grid;
+    place-items: center;
+    width: 53px;
+    height: 53px;
+    margin-bottom: 23px;
+    border-radius: 13px;
+    background: #EAF2FF;
+    color: var(--blue);
+}
+
+.recovery-symbol svg {
+    width: 26px;
+    height: 26px;
+}
+
+.recovery-body h2 {
+    margin: 0 0 15px;
+    color: var(--navy);
+    font-family: var(--heading);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.recovery-body p {
+    margin: 0 0 18px;
+    color: #6E7C90;
+    font-size: 13px;
+    line-height: 1.85;
+}
+
+.recovery-status {
+    padding: 12px 15px;
+    border-left: 3px solid var(--blue);
+    border-radius: 5px;
+    background: #F3F7FD;
+}
+
+.recovery-confirm {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--blue);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid #69A8FF;
+    outline-offset: 3px;
+}
+
+/* TABLET */
+
+@media (max-width: 991.98px) {
+    .login-card {
+        grid-template-columns: 42% 58%;
+    }
+
+    .institution-panel {
+        padding: 30px 27px 25px;
+    }
+
+    .institution-emblem {
+        width: 160px;
+        height: 160px;
+    }
+
+    .form-panel {
+        padding: 38px 35px 25px;
+    }
+
+    .form-atlas-logo {
+        width: 135px;
+        height: 135px;
+    }
+}
+
+/* MÓVIL */
+
+@media (max-width: 767.98px) {
+    .login-shell {
+        padding: 20px 14px;
+    }
+
+    .login-card {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        border-radius: 17px;
+    }
+
+    .institution-panel {
+        min-height: 0;
+        padding: 23px 25px 27px;
+    }
+
+    .institution-content {
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr);
+        column-gap: 18px;
+        align-items: center;
+        padding: 25px 0 0;
+        text-align: left;
+    }
+
+    .institution-emblem {
+        grid-row: 1 / 4;
+        width: 100px;
+        height: 100px;
+        margin: 0;
+        padding: 5px;
+        border-radius: 12px;
+    }
+
+    .institution-label {
+        margin: 0 0 6px;
+        font-size: 9px;
+    }
+
+    .institution-content h1 {
+        font-size: 21px;
+        letter-spacing: -.6px;
+    }
+
+    .institution-content h1 br {
+        display: none;
+    }
+
+    .institution-content p {
+        margin-top: 6px;
+        font-size: 11px;
+    }
+
+    .institution-footer {
+        display: none;
+    }
+
+    .form-panel {
+        padding: 32px 26px 23px;
+    }
+
+    .form-atlas-logo {
+        width: 115px;
+        height: 115px;
+        margin-bottom: 16px;
+    }
+
+    .form-heading {
+        margin-bottom: 28px;
+    }
+
+    .form-heading h2 {
+        font-size: 27px;
+    }
+
+    .form-footer {
+        margin-top: 25px;
+        padding-top: 18px;
+        border-top: 1px solid #EDF0F5;
+    }
+}
+
+@media (max-width: 390px) {
+    .institution-content {
+        grid-template-columns: 80px minmax(0, 1fr);
+        column-gap: 12px;
+    }
+
+    .institution-emblem {
+        width: 80px;
+        height: 80px;
+    }
+
+    .institution-content h1 {
+        font-size: 18px;
+    }
+
+    .form-panel {
+        padding: 28px 20px 22px;
+    }
+
+    .recovery-body {
+        padding: 30px 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: .01ms !important;
+    }
+}

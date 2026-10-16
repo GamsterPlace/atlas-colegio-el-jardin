@@ -1,0 +1,1 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">@include('direccion.notas.consulta.boleta-estilos')</head><body style="margin:0">@php($paraPdf = true)@include('direccion.notas.consulta.boleta')</body></html>

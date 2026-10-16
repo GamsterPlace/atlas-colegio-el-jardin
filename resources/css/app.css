@@ -1,0 +1,1241 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --atlas-navy: #14233F;
+    --atlas-navy-dark: #101B32;
+    --atlas-blue: #0868ED;
+    --atlas-gold: #E9DFCF;
+    --atlas-light: #F7F4EF;
+    --atlas-text: #263247;
+    --atlas-muted: #697589;
+
+    --school-red: #B3263E;
+    --school-red-dark: #8F1E32;
+    --school-beige: #E9DFCF;
+    --school-green: #78B943;
+
+    --institutional-white: #FFFFFF;
+    --institutional-border: #E5E9EF;
+    --institutional-shadow: 0 8px 30px rgba(20, 35, 63, .08);
+
+    --font-primary: 'DM Sans', sans-serif;
+    --font-heading: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* CONFIGURACIÓN GENERAL */
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 110px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+    color: var(--atlas-text);
+    background: var(--institutional-white);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+}
+
+a {
+    transition: color .2s ease, background-color .2s ease;
+}
+
+img {
+    max-width: 100%;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 15px;
+    z-index: 2000;
+    padding: 12px 20px;
+    background: var(--school-red);
+    color: #FFFFFF;
+    border-radius: 8px;
+}
+
+.skip-link:focus {
+    top: 12px;
+    color: #FFFFFF;
+}
+
+/* BARRA SUPERIOR */
+
+.institutional-topbar {
+    background: var(--atlas-navy);
+    color: #E8EDF5;
+    padding: 10px 0;
+    font-size: 12px;
+}
+
+.topbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.topbar-location,
+.topbar-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-location i,
+.topbar-message i {
+    color: #F1C9D0;
+    font-size: 13px;
+}
+
+/* ENCABEZADO INSTITUCIONAL */
+
+.institutional-header {
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--institutional-border);
+    box-shadow: 0 4px 22px rgba(20, 35, 63, .05);
+    z-index: 1030;
+}
+
+.institutional-navbar {
+    min-height: 92px;
+    padding: 12px 0;
+}
+
+.institutional-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 13px;
+    margin-right: 25px;
+    text-decoration: none;
+    min-width: 0;
+}
+
+.institutional-logo {
+    width: 66px;
+    height: 66px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.institutional-brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    line-height: 1.2;
+}
+
+.institutional-brand-text strong {
+    font-family: var(--font-heading);
+    color: var(--atlas-navy);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -.35px;
+}
+
+.institutional-brand-text small {
+    color: var(--school-red);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+/* NAVEGACIÓN */
+
+.institutional-menu {
+    gap: 3px;
+}
+
+.institutional-menu .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 11px !important;
+    color: var(--atlas-text);
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    border-radius: 7px;
+    transition: color .2s ease, background-color .2s ease;
+}
+
+.institutional-menu .nav-link:hover {
+    color: var(--school-red);
+    background: #FAF3F4;
+}
+
+.institutional-menu .nav-link.active {
+    color: var(--school-red);
+}
+
+.institutional-menu .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 11px;
+    right: 11px;
+    height: 2px;
+    background: var(--school-red);
+    border-radius: 3px;
+}
+
+/* ACCESO A ATLAS */
+
+.institutional-atlas-item {
+    margin-left: 12px;
+}
+
+.btn-atlas-access {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 43px;
+    padding: 11px 16px;
+    background: var(--atlas-navy);
+    border: 1px solid var(--atlas-navy);
+    border-radius: 9px;
+    color: #FFFFFF;
+    font-family: var(--font-primary);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+    cursor: default;
+}
+
+.btn-atlas-access > i:first-child {
+    color: #8DBBFF;
+    font-size: 15px;
+}
+
+.btn-atlas-access .atlas-lock {
+    font-size: 10px;
+    color: #CFD9E9;
+}
+
+.btn-atlas-access:hover {
+    background: var(--atlas-navy);
+    border-color: var(--atlas-navy);
+    color: #FFFFFF;
+}
+
+/* BOTONES GENERALES */
+
+.btn-atlas {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 21px;
+    background: var(--atlas-navy);
+    border: 1px solid var(--atlas-navy);
+    border-radius: 9px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.btn-atlas:hover {
+    background: var(--atlas-blue);
+    border-color: var(--atlas-blue);
+    color: #FFFFFF;
+}
+
+.btn-institutional {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 13px 22px;
+    background: var(--school-red);
+    border: 1px solid var(--school-red);
+    border-radius: 9px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.btn-institutional:hover {
+    background: var(--school-red-dark);
+    border-color: var(--school-red-dark);
+    color: #FFFFFF;
+}
+
+/* TÍTULOS Y SECCIONES COMPARTIDAS */
+
+.section-padding {
+    padding: 95px 0;
+}
+
+.section-eyebrow {
+    color: var(--school-red);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.section-heading {
+    margin: 17px 0 23px;
+    color: var(--atlas-navy);
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.3;
+}
+
+.section-description {
+    color: var(--atlas-muted);
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+.section-center {
+    max-width: 700px;
+    margin: 0 auto 35px;
+    text-align: center;
+}
+
+/* PIE DE PÁGINA */
+
+.institutional-footer {
+    background: var(--atlas-navy-dark);
+    color: #CFD8E7;
+    padding: 75px 0 0;
+}
+
+.footer-main {
+    padding-bottom: 55px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.footer-logo {
+    width: 76px;
+    height: 76px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.footer-brand-name h4 {
+    margin: 0 0 7px;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.5;
+}
+
+.footer-brand-name span {
+    color: #E7A6B1;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.footer-description {
+    max-width: 360px;
+    margin: 0;
+    color: #C8D3E3;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.footer-title {
+    margin: 0 0 25px;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 14px;
+}
+
+.footer-links a {
+    display: inline-flex;
+    align-items: center;
+    color: #CBD5E3;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.footer-links a:hover {
+    color: #FFFFFF;
+    transform: translateX(3px);
+}
+
+/* IDENTIDAD ATLAS EN FOOTER */
+
+.footer-atlas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 25px;
+    padding: 15px;
+    background: rgba(255, 255, 255, .055);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 11px;
+}
+
+.footer-atlas-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    background: rgba(8, 104, 237, .20);
+    color: #8DBBFF;
+    border-radius: 10px;
+    font-size: 19px;
+}
+
+.footer-atlas > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.footer-atlas strong {
+    color: #FFFFFF;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+.footer-atlas span {
+    color: #CAD5E5;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.footer-atlas small {
+    color: #94BFFF;
+    font-size: 10px;
+}
+
+/* CONTACTO FOOTER */
+
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #D6E0ED;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.footer-contact-item i {
+    color: #E9A6B0;
+    font-size: 17px;
+    margin-top: 2px;
+}
+
+.footer-contact-note {
+    margin: 18px 0;
+    color: #AEBED1;
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.footer-contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.footer-contact-link:hover {
+    color: #E9A6B0;
+}
+
+/* BARRA INFERIOR */
+
+.footer-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, .12);
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 25px 0;
+}
+
+.footer-copyright,
+.footer-developer {
+    color: #AEBED1;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.footer-developer strong {
+    color: #FFFFFF;
+    font-weight: 800;
+}
+
+/* ACCESIBILIDAD */
+
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--atlas-blue);
+    outline-offset: 3px;
+}
+
+/* TABLETAS Y PANTALLAS MEDIANAS */
+
+@media (max-width: 1199.98px) {
+    .institutional-brand-text strong {
+        font-size: 13px;
+    }
+
+    .institutional-logo {
+        width: 58px;
+        height: 58px;
+    }
+
+    .institutional-menu .nav-link {
+        padding: 10px 7px !important;
+        font-size: 11.5px;
+    }
+
+    .institutional-atlas-item {
+        margin-left: 5px;
+    }
+
+    .btn-atlas-access {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+}
+
+/* NAVEGACIÓN MÓVIL */
+
+@media (max-width: 991.98px) {
+    .institutional-navbar {
+        min-height: 78px;
+        padding: 10px 0;
+    }
+
+    .institutional-toggler {
+        border: 1px solid var(--institutional-border);
+        border-radius: 9px;
+        padding: 8px 11px;
+    }
+
+    .institutional-toggler:focus {
+        box-shadow: 0 0 0 3px rgba(8, 104, 237, .15);
+    }
+
+    .institutional-header .navbar-collapse {
+        padding: 20px 0 10px;
+        border-top: 1px solid var(--institutional-border);
+        margin-top: 15px;
+    }
+
+    .institutional-menu {
+        align-items: stretch !important;
+        gap: 4px;
+    }
+
+    .institutional-menu .nav-link {
+        display: flex;
+        width: 100%;
+        padding: 13px 15px !important;
+        font-size: 13px;
+        border-radius: 8px;
+    }
+
+    .institutional-menu .nav-link.active {
+        background: #FAF0F2;
+    }
+
+    .institutional-menu .nav-link.active::after {
+        left: 0;
+        right: auto;
+        top: 10px;
+        bottom: 10px;
+        width: 3px;
+        height: auto;
+    }
+
+    .institutional-atlas-item {
+        margin: 14px 0 0;
+    }
+
+    .btn-atlas-access {
+        width: 100%;
+        padding: 14px;
+        font-size: 13px;
+    }
+
+    .section-padding {
+        padding: 75px 0;
+    }
+
+    .institutional-footer {
+        padding-top: 60px;
+    }
+}
+
+/* TELÉFONOS */
+
+@media (max-width: 575.98px) {
+    .institutional-topbar {
+        padding: 8px 0;
+        font-size: 10px;
+    }
+
+    .topbar-message {
+        display: none;
+    }
+
+    .institutional-brand {
+        gap: 9px;
+        margin-right: 8px;
+    }
+
+    .institutional-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .institutional-brand-text strong {
+        font-size: 11px;
+        letter-spacing: -.2px;
+    }
+
+    .institutional-brand-text small {
+        font-size: 9px;
+        letter-spacing: 1.5px;
+    }
+
+    .section-padding {
+        padding: 60px 0;
+    }
+
+    .section-heading {
+        font-size: 28px;
+    }
+
+    .institutional-footer {
+        padding-top: 50px;
+    }
+
+    .footer-main {
+        padding-bottom: 35px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}
+
+
+
+/* ==========================================
+   GAMSTERPLACE - ESPACIO PUBLICITARIO
+========================================== */
+
+:root {
+    --gm-navy: #101B32;
+    --gm-navy-light: #172C4D;
+    --gm-blue: #0868ED;
+    --gm-blue-light: #EAF2FF;
+    --gm-gold: #D8AD62;
+    --gm-white: #FFFFFF;
+    --gm-muted: #697589;
+    --gm-border: #E5EAF2;
+}
+
+/* BOTÓN FLOTANTE */
+
+.gm-floating-button {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1020;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 15px 10px 10px;
+
+    background: var(--gm-navy);
+    border: 1px solid rgba(216, 173, 98, .45);
+    border-radius: 16px;
+
+    color: var(--gm-white);
+    box-shadow: 0 12px 35px rgba(16, 27, 50, .28);
+
+    cursor: pointer;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.gm-floating-button:hover {
+    transform: translateY(-4px);
+    border-color: var(--gm-gold);
+    box-shadow: 0 18px 40px rgba(16, 27, 50, .35);
+}
+
+.gm-floating-button img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.gm-floating-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    text-align: left;
+}
+
+.gm-floating-text strong {
+    color: var(--gm-white);
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.gm-floating-text small {
+    color: #C5D6ED;
+    font-size: 10px;
+}
+
+.gm-floating-arrow {
+    color: var(--gm-gold);
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+/* PANEL LATERAL */
+
+.gm-offcanvas {
+    --bs-offcanvas-width: 440px;
+
+    background: #F7F9FC;
+    border-left: 1px solid var(--gm-border);
+}
+
+.gm-panel-header {
+    align-items: flex-start;
+    padding: 26px 25px;
+
+    background:
+        radial-gradient(
+            circle at 95% 5%,
+            rgba(8, 104, 237, .24),
+            transparent 48%
+        ),
+        linear-gradient(
+            135deg,
+            #101B32,
+            #1A365B
+        );
+
+    color: var(--gm-white);
+}
+
+.gm-panel-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.gm-panel-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.gm-panel-identity > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.gm-panel-overline {
+    color: var(--gm-gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.gm-panel-identity h2 {
+    margin: 0;
+    color: var(--gm-white);
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.gm-panel-tagline {
+    color: #D4E0EF;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.gm-panel-header .btn-close {
+    margin: 2px 0 0 8px;
+    flex-shrink: 0;
+}
+
+/* CUERPO DEL PANEL */
+
+.gm-panel-body {
+    padding: 25px;
+}
+
+.gm-panel-hero {
+    padding: 25px;
+
+    background: var(--gm-white);
+    border: 1px solid var(--gm-border);
+    border-radius: 16px;
+
+    box-shadow: 0 8px 25px rgba(16, 27, 50, .04);
+}
+
+.gm-panel-eyebrow {
+    display: block;
+    margin-bottom: 14px;
+
+    color: var(--gm-blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.gm-panel-hero h3 {
+    margin: 0 0 17px;
+
+    color: var(--gm-navy);
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.gm-panel-hero p {
+    margin: 0;
+
+    color: var(--gm-muted);
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.gm-panel-highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-top: 22px;
+    padding: 16px;
+
+    background: #F4F7FC;
+    border-left: 3px solid var(--gm-gold);
+    border-radius: 8px;
+
+    color: var(--gm-navy);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.7;
+}
+
+.gm-panel-highlight i {
+    color: #B48A43;
+    font-size: 19px;
+    flex-shrink: 0;
+}
+
+/* LLAMADO A LA ACCIÓN */
+
+.gm-panel-cta {
+    margin-top: 20px;
+    padding: 24px;
+
+    background: linear-gradient(
+        135deg,
+        #101B32,
+        #1B416D
+    );
+
+    border-radius: 16px;
+    color: var(--gm-white);
+}
+
+.gm-panel-cta h4 {
+    margin: 0 0 10px;
+    color: var(--gm-white);
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.gm-panel-cta p {
+    margin: 0 0 20px;
+    color: #D4DFEE;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.gm-whatsapp-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 11px;
+
+    width: 100%;
+    padding: 15px 18px;
+
+    background: #25D366;
+    border: 1px solid #25D366;
+    border-radius: 10px;
+
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.gm-whatsapp-button:hover {
+    background: #1DA851;
+    border-color: #1DA851;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+.gm-whatsapp-button .bi-whatsapp {
+    font-size: 20px;
+}
+
+/* CANALES DE COMUNICACIÓN */
+
+.gm-panel-contact {
+    margin-top: 27px;
+}
+
+.gm-panel-contact h4 {
+    margin: 0 0 17px;
+    color: var(--gm-navy);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.gm-contact-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    margin-bottom: 10px;
+    padding: 15px;
+
+    background: var(--gm-white);
+    border: 1px solid var(--gm-border);
+    border-radius: 12px;
+
+    color: var(--gm-navy);
+    text-decoration: none;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease;
+}
+
+a.gm-contact-row:hover {
+    background: var(--gm-blue-light);
+    border-color: #B7D2FC;
+    color: var(--gm-navy);
+}
+
+.gm-contact-icon {
+    display: grid;
+    place-items: center;
+
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+
+    background: var(--gm-blue-light);
+    border-radius: 10px;
+
+    color: var(--gm-blue);
+    font-size: 18px;
+}
+
+.gm-contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.gm-contact-details small {
+    color: var(--gm-muted);
+    font-size: 11px;
+}
+
+.gm-contact-details strong {
+    color: var(--gm-navy);
+    font-size: 12px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.gm-contact-row > .bi-arrow-up-right {
+    color: #9BA9BC;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+/* FIRMA CORPORATIVA */
+
+.gm-panel-signature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 30px;
+    padding: 18px 0;
+
+    border-top: 1px solid var(--gm-border);
+}
+
+.gm-panel-signature img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+
+.gm-panel-signature > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gm-panel-signature strong {
+    color: var(--gm-navy);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.gm-panel-signature span {
+    color: var(--gm-muted);
+    font-size: 11px;
+    font-style: italic;
+}
+
+.gm-advertising-disclaimer {
+    margin: 0;
+    padding-bottom: 15px;
+
+    color: #8994A5;
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+/* BOTÓN DEL FOOTER */
+
+.gm-footer-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 0;
+    margin-left: 4px;
+
+    background: transparent;
+    border: 0;
+
+    color: #FFFFFF;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.gm-footer-trigger:hover {
+    color: var(--gm-gold);
+}
+
+.gm-footer-trigger i {
+    font-size: 10px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 575.98px) {
+    .gm-floating-button {
+        right: 15px;
+        bottom: 15px;
+        gap: 8px;
+        padding: 9px 12px 9px 9px;
+        border-radius: 13px;
+    }
+
+    .gm-floating-button img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .gm-floating-text strong {
+        font-size: 11px;
+    }
+
+    .gm-floating-text small {
+        font-size: 9px;
+    }
+
+    .gm-floating-arrow {
+        display: none;
+    }
+
+    .gm-offcanvas {
+        --bs-offcanvas-width: min(100vw, 440px);
+    }
+
+    .gm-panel-header {
+        padding: 22px 18px;
+    }
+
+    .gm-panel-body {
+        padding: 18px;
+    }
+
+    .gm-panel-logo {
+        width: 50px;
+        height: 50px;
+    }
+
+    .gm-panel-identity h2 {
+        font-size: 19px;
+    }
+
+    .gm-panel-hero,
+    .gm-panel-cta {
+        padding: 20px;
+    }
+
+    .gm-panel-hero h3 {
+        font-size: 21px;
+    }
+}
+
+
+
+/* ==========================================================
+   BOTÓN PORTAL ATLAS
+========================================================== */
+
+.btn-portal-atlas {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    min-height: 44px;
+    padding: 7px 16px 7px 9px;
+    background: #14233F;
+    border: 1px solid #14233F;
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.btn-portal-atlas:hover {
+    background: #0868ED;
+    border-color: #0868ED;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(8, 104, 237, .18);
+}
+
+.btn-portal-atlas-logo {
+    display: block;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.btn-portal-atlas-arrow {
+    margin-left: 2px;
+    font-size: 13px;
+    opacity: .8;
+}
+
+@media (max-width: 991.98px) {
+    .btn-portal-atlas {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

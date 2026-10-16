@@ -1,0 +1,1015 @@
+
+/* ==========================================================
+   COLEGIO MIXTO EL JARDÍN
+   VIDA ESTUDIANTIL
+   EXPERIENCIAS, JORNADA, RECURSOS Y ACTIVIDADES
+========================================================== */
+
+:root {
+    --vida-navy: #14233F;
+    --vida-navy-dark: #101B32;
+    --vida-red: #B3263E;
+    --vida-red-dark: #922037;
+    --vida-beige: #E9DFCF;
+    --vida-white: #FFFFFF;
+    --vida-light: #F5F7FA;
+    --vida-text: #657187;
+    --vida-border: #E4E9F0;
+}
+
+/* ==========================================================
+   ENCABEZADO
+========================================================== */
+
+.vida-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 350px;
+    padding: 85px 0;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 85% 25%,
+            rgba(179, 38, 62, .20),
+            transparent 38%
+        ),
+        linear-gradient(
+            120deg,
+            #101B32 0%,
+            #14233F 60%,
+            #304B70 100%
+        );
+    color: #FFFFFF;
+}
+
+.vida-hero::before,
+.vida-hero::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.vida-hero::before {
+    width: 480px;
+    height: 480px;
+    right: -110px;
+    top: -170px;
+}
+
+.vida-hero::after {
+    width: 320px;
+    height: 320px;
+    right: -30px;
+    top: -75px;
+}
+
+.vida-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 790px;
+}
+
+.vida-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: #F0C2CA;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.4px;
+}
+
+.vida-eyebrow::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: #DCA6B0;
+}
+
+.vida-hero h1 {
+    margin: 21px 0;
+    color: #FFFFFF;
+    font-size: clamp(36px, 4.8vw, 60px);
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -1.4px;
+}
+
+.vida-hero p {
+    max-width: 660px;
+    margin: 0;
+    color: #D8E2EF;
+    font-size: 16px;
+    line-height: 1.9;
+}
+
+/* ==========================================================
+   BREADCRUMB
+========================================================== */
+
+.vida-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    list-style: none;
+    margin: 29px 0 0;
+    padding: 0;
+    font-size: 12px;
+}
+
+.vida-breadcrumb li {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #F0BCC6;
+    font-weight: 700;
+}
+
+.vida-breadcrumb li + li::before {
+    content: '/';
+    color: rgba(255, 255, 255, .5);
+}
+
+.vida-breadcrumb a {
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+.vida-breadcrumb a:hover {
+    color: #F0BCC6;
+}
+
+/* ==========================================================
+   FOTOGRAFÍAS PENDIENTES
+========================================================== */
+
+.vida-photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    padding: 25px;
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(179, 38, 62, .06),
+            transparent 45%
+        ),
+        linear-gradient(
+            145deg,
+            #E9EDF3,
+            #F4F6F9
+        );
+    color: #8493A8;
+    text-align: center;
+}
+
+.vida-photo-placeholder > i {
+    color: #8B9CB2;
+    font-size: 52px;
+}
+
+.vida-photo-placeholder strong {
+    color: #14233F;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.vida-photo-placeholder span {
+    max-width: 280px;
+    color: #697589;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+/* ==========================================================
+   PRESENTACIÓN
+========================================================== */
+
+.vida-presentacion {
+    background: #FFFFFF;
+}
+
+.vida-presentacion-content .section-heading {
+    max-width: 560px;
+    margin-bottom: 24px;
+}
+
+.vida-presentacion-content > p {
+    margin: 0 0 18px;
+    color: var(--vida-text);
+    font-size: 14px;
+    line-height: 2;
+}
+
+.vida-explorar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 15px;
+    padding: 14px 22px;
+    background: var(--vida-navy);
+    border: 1px solid var(--vida-navy);
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.vida-explorar-btn:hover {
+    background: var(--vida-red);
+    border-color: var(--vida-red);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+.vida-explorar-btn i {
+    font-size: 16px;
+}
+
+.vida-presentacion-visual {
+    position: relative;
+    padding: 0 0 35px 28px;
+}
+
+.vida-photo-main,
+.vida-presentacion-img {
+    display: block;
+    width: 100%;
+    height: 430px;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.vida-photo-main > i {
+    font-size: 72px;
+}
+
+.vida-presentacion-img {
+    object-fit: cover;
+}
+
+.vida-visual-label {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 260px;
+    padding: 18px 22px;
+    background: var(--vida-navy);
+    border-radius: 13px;
+    box-shadow: 0 12px 35px rgba(20, 35, 63, .18);
+    color: #FFFFFF;
+}
+
+.vida-visual-label > i {
+    display: grid;
+    place-items: center;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, .12);
+    border-radius: 11px;
+    color: #FFFFFF;
+    font-size: 21px;
+}
+
+.vida-visual-label strong,
+.vida-visual-label span {
+    display: block;
+}
+
+.vida-visual-label strong {
+    margin-bottom: 5px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.vida-visual-label span {
+    color: #CBD8E9;
+    font-size: 11px;
+}
+
+/* ==========================================================
+   UN DÍA EN EL COLEGIO
+========================================================== */
+
+.vida-jornada {
+    background: #F5F7FA;
+    scroll-margin-top: 100px;
+}
+
+.vida-jornada .section-center {
+    margin-bottom: 43px;
+}
+
+.vida-jornada-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.vida-jornada-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #FFFFFF;
+    border: 1px solid var(--vida-border);
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(20, 35, 63, .035);
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.vida-jornada-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(20, 35, 63, .09);
+}
+
+.vida-jornada-imagen {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background: #E9EDF3;
+}
+
+.vida-jornada-imagen > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .35s ease;
+}
+
+.vida-jornada-card:hover .vida-jornada-imagen > img {
+    transform: scale(1.045);
+}
+
+.vida-jornada-imagen .vida-photo-placeholder {
+    min-height: 220px;
+    padding: 18px;
+}
+
+.vida-jornada-imagen .vida-photo-placeholder i {
+    font-size: 47px;
+}
+
+.vida-jornada-imagen .vida-photo-placeholder span {
+    font-size: 11px;
+}
+
+.vida-jornada-numero {
+    position: absolute;
+    left: 16px;
+    bottom: 15px;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    background: var(--vida-red);
+    border: 3px solid #FFFFFF;
+    border-radius: 11px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 5px 15px rgba(20, 35, 63, .14);
+}
+
+.vida-jornada-detalle {
+    padding: 27px 23px 29px;
+}
+
+.vida-jornada-detalle h3 {
+    margin: 0 0 12px;
+    color: var(--vida-navy);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.5;
+}
+
+.vida-jornada-detalle p {
+    margin: 0;
+    color: var(--vida-text);
+    font-size: 12px;
+    line-height: 1.95;
+}
+
+/* ==========================================================
+   RECURSOS UTILIZADOS POR LOS ESTUDIANTES
+========================================================== */
+
+.vida-recursos {
+    background: #FFFFFF;
+}
+
+.vida-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 42px;
+}
+
+.vida-section-header .section-description {
+    max-width: 720px;
+    margin-bottom: 0;
+}
+
+.vida-recurso-card {
+    overflow: hidden;
+    background: #FFFFFF;
+    border: 1px solid var(--vida-border);
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(20, 35, 63, .035);
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.vida-recurso-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(20, 35, 63, .08);
+}
+
+.vida-recurso-imagen {
+    height: 250px;
+    overflow: hidden;
+    background: #E9EDF3;
+}
+
+.vida-recurso-imagen > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .35s ease;
+}
+
+.vida-recurso-card:hover .vida-recurso-imagen > img {
+    transform: scale(1.045);
+}
+
+.vida-recurso-imagen .vida-photo-placeholder {
+    min-height: 250px;
+}
+
+.vida-recurso-content {
+    position: relative;
+    padding: 34px 28px 30px;
+}
+
+.vida-recurso-icon {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-top: -62px;
+    margin-bottom: 22px;
+    background: var(--vida-red);
+    border: 4px solid #FFFFFF;
+    border-radius: 13px;
+    color: #FFFFFF;
+    font-size: 21px;
+    box-shadow: 0 6px 16px rgba(179, 38, 62, .16);
+}
+
+.vida-recurso-content h3 {
+    margin: 0 0 13px;
+    color: var(--vida-navy);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.vida-recurso-content p {
+    margin: 0;
+    color: var(--vida-text);
+    font-size: 12px;
+    line-height: 1.95;
+}
+
+/* ==========================================================
+   ACTIVIDADES Y EXPERIENCIAS
+========================================================== */
+
+.vida-actividades {
+    background: #F5F7FA;
+}
+
+.vida-actividades .section-center {
+    margin-bottom: 43px;
+}
+
+.vida-actividad-card {
+    overflow: hidden;
+    background: #FFFFFF;
+    border: 1px solid var(--vida-border);
+    border-radius: 16px;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.vida-actividad-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(20, 35, 63, .08);
+}
+
+.vida-actividad-image {
+    height: 220px;
+    overflow: hidden;
+    background: #E9EDF3;
+}
+
+.vida-actividad-image > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .35s ease;
+}
+
+.vida-actividad-card:hover .vida-actividad-image > img {
+    transform: scale(1.045);
+}
+
+.vida-actividad-image .vida-photo-placeholder {
+    min-height: 220px;
+    padding: 20px;
+}
+
+.vida-actividad-image .vida-photo-placeholder i {
+    font-size: 49px;
+}
+
+.vida-actividad-content {
+    padding: 25px 23px 29px;
+}
+
+.vida-actividad-etiqueta {
+    display: inline-block;
+    margin-bottom: 13px;
+    color: var(--vida-red);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.vida-actividad-content h3 {
+    margin: 0 0 12px;
+    color: var(--vida-navy);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.5;
+}
+
+.vida-actividad-content p {
+    margin: 0;
+    color: var(--vida-text);
+    font-size: 12px;
+    line-height: 1.95;
+}
+
+/* ==========================================================
+   MOMENTOS QUE NOS REPRESENTAN
+========================================================== */
+
+.vida-momentos {
+    background: #FFFFFF;
+}
+
+.vida-momentos .section-center {
+    margin-bottom: 43px;
+}
+
+.vida-momentos-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 15px;
+}
+
+.vida-momento-item {
+    position: relative;
+    min-width: 0;
+    height: 360px;
+    overflow: hidden;
+    background: #E8EDF3;
+    border-radius: 16px;
+}
+
+.vida-momento-item.principal {
+    height: 360px;
+}
+
+.vida-momento-item > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .35s ease;
+}
+
+.vida-momento-item:hover > img {
+    transform: scale(1.045);
+}
+
+.vida-momento-item .vida-photo-placeholder {
+    min-height: 100%;
+    padding: 20px;
+}
+
+.vida-momento-item .vida-photo-placeholder i {
+    font-size: 50px;
+}
+
+.vida-momento-item.principal .vida-photo-placeholder i {
+    font-size: 66px;
+}
+
+.vida-momento-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 65px 22px 23px;
+    background: linear-gradient(
+        to top,
+        rgba(16, 27, 50, .90),
+        transparent
+    );
+    pointer-events: none;
+}
+
+.vida-momento-caption h3 {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.5;
+}
+
+.vida-momento-item.principal .vida-momento-caption h3 {
+    font-size: 19px;
+}
+
+/* ==========================================================
+   AVISOS DEMOSTRATIVOS
+========================================================== */
+
+.vida-demo-note {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 9px;
+    max-width: 850px;
+    margin: 31px auto 0;
+    color: #8994A5;
+    font-size: 11px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.vida-demo-note i {
+    margin-top: 2px;
+    flex-shrink: 0;
+    color: var(--vida-red);
+    font-size: 15px;
+}
+
+/* ==========================================================
+   CIERRE
+========================================================== */
+
+.vida-cierre {
+    padding: 95px 0;
+    background:
+        radial-gradient(
+            circle at 85% 50%,
+            rgba(179, 38, 62, .16),
+            transparent 35%
+        ),
+        var(--vida-navy);
+    color: #FFFFFF;
+}
+
+.vida-cierre-content {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.vida-cierre-content > span {
+    color: #F0B9C3;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.vida-cierre-content h2 {
+    margin: 20px 0;
+    color: #FFFFFF;
+    font-size: clamp(29px, 3.6vw, 44px);
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.vida-cierre-content p {
+    max-width: 610px;
+    margin: 0 auto 30px;
+    color: #D5E0ED;
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+.vida-cierre .btn-institutional {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    padding: 15px 26px;
+    background: var(--vida-red);
+    border: 1px solid var(--vida-red);
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.vida-cierre .btn-institutional:hover {
+    background: var(--vida-red-dark);
+    border-color: var(--vida-red-dark);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+/* ==========================================================
+   RESPONSIVE - PANTALLAS MEDIANAS
+========================================================== */
+
+@media (max-width: 1199.98px) {
+    .vida-jornada-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vida-jornada-imagen {
+        height: 240px;
+    }
+
+    .vida-jornada-imagen .vida-photo-placeholder {
+        min-height: 240px;
+    }
+
+    .vida-momentos-grid {
+        grid-template-columns: 1.2fr 1fr 1fr;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE - TABLET
+========================================================== */
+
+@media (max-width: 991.98px) {
+    .vida-hero {
+        min-height: 310px;
+        padding: 75px 0;
+    }
+
+    .vida-presentacion-visual {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .vida-photo-main,
+    .vida-presentacion-img {
+        height: 390px;
+    }
+
+    .vida-recursos .row > div {
+        margin-bottom: 0;
+    }
+
+    .vida-momentos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vida-momento-item.principal {
+        grid-column: span 2;
+    }
+
+    .vida-momento-item,
+    .vida-momento-item.principal {
+        height: 300px;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE - MÓVIL
+========================================================== */
+
+@media (max-width: 767.98px) {
+    .vida-hero {
+        min-height: 275px;
+        padding: 65px 0;
+    }
+
+    .vida-hero h1 {
+        font-size: 37px;
+        letter-spacing: -.8px;
+    }
+
+    .vida-hero p {
+        font-size: 14px;
+    }
+
+    .vida-presentacion-content > p {
+        font-size: 13px;
+    }
+
+    .vida-presentacion-visual {
+        padding-left: 18px;
+        padding-bottom: 28px;
+    }
+
+    .vida-photo-main,
+    .vida-presentacion-img {
+        height: 330px;
+    }
+
+    .vida-visual-label {
+        min-width: 230px;
+        padding: 15px 18px;
+    }
+
+    .vida-jornada-grid {
+        gap: 16px;
+    }
+
+    .vida-jornada-imagen {
+        height: 200px;
+    }
+
+    .vida-jornada-imagen .vida-photo-placeholder {
+        min-height: 200px;
+    }
+
+    .vida-recurso-imagen {
+        height: 230px;
+    }
+
+    .vida-recurso-imagen .vida-photo-placeholder {
+        min-height: 230px;
+    }
+
+    .vida-recurso-content {
+        padding: 31px 24px 27px;
+    }
+
+    .vida-actividad-image {
+        height: 230px;
+    }
+
+    .vida-actividad-image .vida-photo-placeholder {
+        min-height: 230px;
+    }
+
+    .vida-momento-item,
+    .vida-momento-item.principal {
+        height: 260px;
+    }
+
+    .vida-cierre {
+        padding: 75px 0;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE - MÓVIL PEQUEÑO
+========================================================== */
+
+@media (max-width: 575.98px) {
+    .vida-hero h1 {
+        font-size: 32px;
+    }
+
+    .vida-photo-main,
+    .vida-presentacion-img {
+        height: 280px;
+    }
+
+    .vida-photo-main > i {
+        font-size: 55px;
+    }
+
+    .vida-visual-label {
+        min-width: 0;
+        max-width: 92%;
+        padding: 13px 16px;
+    }
+
+    .vida-visual-label > i {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .vida-jornada-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .vida-jornada-imagen {
+        height: 230px;
+    }
+
+    .vida-jornada-imagen .vida-photo-placeholder {
+        min-height: 230px;
+    }
+
+    .vida-jornada-detalle {
+        padding: 24px 22px 27px;
+    }
+
+    .vida-recurso-imagen {
+        height: 215px;
+    }
+
+    .vida-recurso-imagen .vida-photo-placeholder {
+        min-height: 215px;
+    }
+
+    .vida-actividad-image {
+        height: 215px;
+    }
+
+    .vida-actividad-image .vida-photo-placeholder {
+        min-height: 215px;
+    }
+
+    .vida-momentos-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+    }
+
+    .vida-momento-item.principal {
+        grid-column: auto;
+    }
+
+    .vida-momento-item,
+    .vida-momento-item.principal {
+        height: 240px;
+    }
+
+    .vida-momento-caption {
+        padding: 50px 20px 20px;
+    }
+
+    .vida-momento-item.principal .vida-momento-caption h3 {
+        font-size: 16px;
+    }
+
+    .vida-cierre-content h2 {
+        font-size: 28px;
+    }
+}
+
+/* ==========================================================
+   ACCESIBILIDAD
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .vida-breadcrumb a,
+    .vida-explorar-btn,
+    .vida-jornada-card,
+    .vida-jornada-imagen > img,
+    .vida-recurso-card,
+    .vida-recurso-imagen > img,
+    .vida-actividad-card,
+    .vida-actividad-image > img,
+    .vida-momento-item > img,
+    .vida-cierre .btn-institutional {
+        transition: none;
+    }
+}

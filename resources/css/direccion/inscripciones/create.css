@@ -1,0 +1,201 @@
+/* ATLAS | Dirección | Inscripción y reinscripción */
+/* Estilos limitados al contenedor que incluye #formInscripcion. */
+.container-fluid:has(> #formInscripcion) {
+  --ai-primary: #173d70;
+  --ai-primary-hover: #102e56;
+  --ai-ink: #24364e;
+  --ai-muted: #697b91;
+  --ai-border: #dfe7f1;
+  --ai-soft: #f4f7fc;
+  --ai-focus: rgba(42, 105, 181, .15);
+  color: var(--ai-ink);
+  width: 100%;
+  padding: 20px 24px 28px;
+}
+.container-fluid:has(> #formInscripcion),
+.container-fluid:has(> #formInscripcion) *,
+.container-fluid:has(> #formInscripcion) *::before,
+.container-fluid:has(> #formInscripcion) *::after { box-sizing: border-box; }
+.container-fluid:has(> #formInscripcion) .d-flex { display: flex; }
+.container-fluid:has(> #formInscripcion) .flex-wrap { flex-wrap: wrap; }
+.container-fluid:has(> #formInscripcion) .align-items-center { align-items: center; }
+.container-fluid:has(> #formInscripcion) .justify-content-between { justify-content: space-between; }
+.container-fluid:has(> #formInscripcion) .justify-content-end { justify-content: flex-end; }
+.container-fluid:has(> #formInscripcion) .gap-2 { gap: 8px; }
+.container-fluid:has(> #formInscripcion) .gap-3 { gap: 16px; }
+.container-fluid:has(> #formInscripcion) .mb-0 { margin-bottom: 0; }
+.container-fluid:has(> #formInscripcion) .mb-1 { margin-bottom: 4px; }
+.container-fluid:has(> #formInscripcion) .mb-3 { margin-bottom: 16px; }
+.container-fluid:has(> #formInscripcion) .mb-4 { margin-bottom: 24px; }
+.container-fluid:has(> #formInscripcion) .mt-2 { margin-top: 8px; }
+.container-fluid:has(> #formInscripcion) .mt-3 { margin-top: 16px; }
+.container-fluid:has(> #formInscripcion) .me-1 { margin-right: 5px; }
+.container-fluid:has(> #formInscripcion) .me-2 { margin-right: 9px; }
+.container-fluid:has(> #formInscripcion) .py-3 { padding-top: 16px; padding-bottom: 16px; }
+.container-fluid:has(> #formInscripcion) .p-3 { padding: 16px; }
+.container-fluid:has(> #formInscripcion) .h-100 { height: 100%; }
+.container-fluid:has(> #formInscripcion) .rounded { border-radius: 10px; }
+.container-fluid:has(> #formInscripcion) .border { border: 1px solid var(--ai-border); }
+.container-fluid:has(> #formInscripcion) .bg-transparent { background: transparent; }
+.container-fluid:has(> #formInscripcion) .text-muted { color: var(--ai-muted); }
+.container-fluid:has(> #formInscripcion) .small,
+.container-fluid:has(> #formInscripcion) small { font-size: 12px; }
+.container-fluid:has(> #formInscripcion) .fw-semibold { font-weight: 650; }
+.container-fluid:has(> #formInscripcion) > .d-flex:first-child { margin-bottom: 26px; }
+.container-fluid:has(> #formInscripcion) > .d-flex:first-child h4 {
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ai-primary-hover);
+  margin-top: 0;
+}
+.container-fluid:has(> #formInscripcion) > .d-flex:first-child p { font-size: 14px; line-height: 1.6; }
+#formInscripcion { width: 100%; }
+#formInscripcion .card {
+  margin-bottom: 23px;
+  overflow: hidden;
+  border: 1px solid var(--ai-border);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 3px 17px rgba(24, 49, 85, .055);
+}
+#formInscripcion .card-header {
+  padding: 17px 23px;
+  background: #f8fafd;
+  border-bottom: 1px solid var(--ai-border);
+}
+#formInscripcion .card-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ai-primary-hover);
+}
+#formInscripcion .card-header h5 i { color: #2866a7; }
+#formInscripcion .card-body { padding: 23px; }
+#formInscripcion .row { display: flex; flex-wrap: wrap; margin: -8px; }
+#formInscripcion .row > * { min-width: 0; width: 100%; padding: 8px; }
+#formInscripcion .col-12 { width: 100%; }
+#formInscripcion .form-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #344a64;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+#formInscripcion .form-control,
+#formInscripcion .form-select {
+  display: block;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 13px;
+  border: 1px solid #d4deeb;
+  border-radius: 8px;
+  background-color: #fff;
+  color: var(--ai-ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+#formInscripcion textarea.form-control { min-height: 76px; resize: vertical; }
+#formInscripcion .form-control::placeholder { color: #99a6b8; }
+#formInscripcion .form-control:focus,
+#formInscripcion .form-select:focus {
+  border-color: #568bcb;
+  box-shadow: 0 0 0 3px var(--ai-focus);
+}
+#formInscripcion .form-control:read-only { background: #f3f6fa; color: #64748b; }
+#formInscripcion .form-control:disabled,
+#formInscripcion .form-select:disabled { background: #f2f5f9; color: #8190a2; cursor: not-allowed; }
+#formInscripcion .form-select { appearance: auto; cursor: pointer; }
+#formInscripcion .input-group { display: flex; width: 100%; align-items: stretch; }
+#formInscripcion .input-group .form-control { flex: 1 1 auto; width: 1%; border-radius: 8px 0 0 8px; }
+#formInscripcion .input-group .btn { border-radius: 0 8px 8px 0; }
+.container-fluid:has(> #formInscripcion) .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 42px;
+  padding: 10px 17px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+.container-fluid:has(> #formInscripcion) .btn-primary { background: var(--ai-primary); color: #fff; border-color: var(--ai-primary); }
+.container-fluid:has(> #formInscripcion) .btn-primary:hover { background: var(--ai-primary-hover); color: #fff; }
+.container-fluid:has(> #formInscripcion) .btn-outline-secondary { background: #fff; color: #455a73; border-color: #d1dbe8; }
+.container-fluid:has(> #formInscripcion) .btn-outline-secondary:hover { background: #f2f6fb; color: #233e60; }
+.container-fluid:has(> #formInscripcion) .btn-outline-primary { background: #fff; color: var(--ai-primary); border-color: #9db8d8; }
+.container-fluid:has(> #formInscripcion) .btn-outline-primary:hover { background: #eef5fc; }
+.container-fluid:has(> #formInscripcion) .btn:disabled { opacity: .6; cursor: not-allowed; }
+#formInscripcion .form-check { display: flex; align-items: flex-start; gap: 9px; }
+#formInscripcion .form-check-input { flex: 0 0 auto; width: 17px; height: 17px; margin: 1px 0 0; accent-color: var(--ai-primary); cursor: pointer; }
+#formInscripcion .form-check-input:disabled { cursor: not-allowed; }
+#formInscripcion .form-check-label { color: #4a5e77; font-size: 13px; line-height: 1.5; cursor: pointer; }
+#formInscripcion .form-check-input:disabled + .form-check-label { color: #8a98aa; cursor: default; }
+#formInscripcion fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+#formInscripcion fieldset:disabled { opacity: .55; }
+#formInscripcion #panelReinscripcion {
+  margin-top: 17px;
+  padding: 18px;
+  border: 1px solid #cfddeb;
+  border-radius: 10px;
+  background: #f7faff;
+}
+#formInscripcion #resultadoBusqueda { font-size: 13px; line-height: 1.5; color: var(--ai-primary); }
+#formInscripcion .alert {
+  padding: 14px 17px;
+  margin-bottom: 17px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+#formInscripcion .alert-danger { background: #fff0f0; border-color: #f2c9c9; color: #9d3030; }
+#formInscripcion .alert-warning { background: #fff8e8; border-color: #f0dfb4; color: #805d19; }
+#formInscripcion .alert ul { padding-left: 20px; }
+#formInscripcion .card-body > p.text-muted { font-size: 13px; line-height: 1.6; }
+#formInscripcion .card-body .border.rounded { display: flex; align-items: center; min-height: 70px; color: #3e5470; background: #f9fbfe; font-size: 13px; }
+#formInscripcion .card-body .border.rounded i { font-size: 18px; color: #2866a7; }
+#formInscripcion .spinner-border {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: atlas-inscripcion-spin .7s linear infinite;
+}
+@keyframes atlas-inscripcion-spin { to { transform: rotate(360deg); } }
+#formInscripcion [hidden],
+.container-fluid:has(> #formInscripcion) [hidden] { display: none !important; }
+@media (min-width: 768px) {
+  #formInscripcion .col-md-2 { width: 16.666667%; }
+  #formInscripcion .col-md-3 { width: 25%; }
+  #formInscripcion .col-md-4 { width: 33.333333%; }
+  #formInscripcion .col-md-5 { width: 41.666667%; }
+  #formInscripcion .col-md-6 { width: 50%; }
+  #formInscripcion .col-md-8 { width: 66.666667%; }
+}
+@media (max-width: 767px) {
+  .container-fluid:has(> #formInscripcion) { padding: 14px 12px 22px; }
+  #formInscripcion .card-header { padding: 15px 17px; }
+  #formInscripcion .card-body { padding: 17px; }
+  #formInscripcion .card-header h5 { font-size: 15px; }
+  .container-fluid:has(> #formInscripcion) > .d-flex:first-child { align-items: stretch; }
+  #formInscripcion .input-group .btn { padding-inline: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #formInscripcion .spinner-border { animation-duration: 1.5s; }
+}
