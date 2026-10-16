@@ -316,31 +316,43 @@
             <div class="card-body">
                 <div class="row g-3">
 
-                    <div class="col-md-6">
-                        <label for="seccion_id" class="form-label">
-                            Grado y sección
-                        </label>
+                    @php
+                        $opcionesAcademicas = $secciones->map(function ($item) {
+                            $grado = $item->grado;
+                            $nivel = $grado?->nivel;
+                            return [
+                                'seccion_id' => (string) $item->id,
+                                'seccion' => (string) $item->nombre,
+                                'ciclo_id' => (string) $item->ciclo_escolar_id,
+                                'grado_id' => (string) ($grado?->id ?? ''),
+                                'grado' => (string) ($grado?->nombre ?? ''),
+                                'nivel_id' => (string) ($nivel?->id ?? ''),
+                                'nivel' => (string) ($nivel?->nombre ?? ''),
+                            ];
+                        })->values();
+                    @endphp
 
-                        <select id="seccion_id"
-                                name="seccion_id"
-                                class="form-select"
-                                required>
-
-                            <option value="">Seleccione una sección</option>
-
-                            @foreach($secciones as $seccion)
-                                <option value="{{ $seccion->id }}"
-                                        data-ciclo="{{ $seccion->ciclo_escolar_id }}"
-                                        @selected((string) old('seccion_id') === (string) $seccion->id)>
-                                    {{ $seccion->nombre }}
-                                </option>
-                            @endforeach
-
+                    <div class="col-md-3">
+                        <label for="nivel_academico_id" class="form-label">Nivel educativo</label>
+                        <select id="nivel_academico_id" class="form-select" required>
+                            <option value="">Seleccione un nivel</option>
                         </select>
+                    </div>
 
-                        <small class="text-muted">
-                            Las secciones corresponden al ciclo escolar seleccionado.
-                        </small>
+                    <div class="col-md-3">
+                        <label for="grado_academico_id" class="form-label">Grado</label>
+                        <select id="grado_academico_id" class="form-select" required disabled>
+                            <option value="">Primero seleccione un nivel</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="seccion_id" class="form-label">Sección</label>
+                        <select id="seccion_id" name="seccion_id" class="form-select" required disabled
+                                data-inicial="{{ old('seccion_id') }}">
+                            <option value="">Primero seleccione un grado</option>
+                        </select>
+                        <small class="text-muted">Según el ciclo escolar seleccionado.</small>
                     </div>
 
                     <div class="col-md-6">
@@ -801,6 +813,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const edad = document.getElementById('edad');
     const ciclo = document.getElementById('ciclo_escolar_id');
     const seccion = document.getElementById('seccion_id');
+    const nivelAcademico = document.getElementById('nivel_academico_id');
+    const gradoAcademico = document.getElementById('grado_academico_id');
+    const opcionesAcademicas = @json($opcionesAcademicas);
     const financiero = document.getElementById('responsable_financiero');
     const principal = document.getElementById('contacto_principal');
     const guardar = document.getElementById('btnGuardarInscripcion');
@@ -830,14 +845,57 @@ document.addEventListener('DOMContentLoaded', function () {
         edad.value = anios >= 0 ? anios : '';
     }
 
-    function actualizarSecciones() {
-        const seleccionado = ciclo.value;
-        Array.from(seccion.options).forEach(function (opcion) {
-            if (!opcion.value) return;
-            opcion.hidden = opcion.dataset.ciclo !== seleccionado;
-            opcion.disabled = opcion.dataset.ciclo !== seleccionado;
+    function establecerOpciones(selector, items, mensaje, claveId, claveNombre) {
+        selector.replaceChildren(new Option(mensaje, ''));
+        const agregados = new Set();
+        items.forEach(function (item) {
+            const id = String(item[claveId] ?? '');
+            if (!id || agregados.has(id)) return;
+            agregados.add(id);
+            selector.add(new Option(item[claveNombre], id));
         });
-        if (seccion.selectedOptions[0]?.disabled) seccion.value = '';
+        selector.disabled = agregados.size === 0;
+    }
+
+    function actualizarNiveles() {
+        const disponibles = opcionesAcademicas.filter(item => item.ciclo_id === ciclo.value);
+        establecerOpciones(nivelAcademico, disponibles, 'Seleccione un nivel', 'nivel_id', 'nivel');
+        gradoAcademico.replaceChildren(new Option('Primero seleccione un nivel', ''));
+        gradoAcademico.disabled = true;
+        seccion.replaceChildren(new Option('Primero seleccione un grado', ''));
+        seccion.disabled = true;
+    }
+
+    function actualizarGrados() {
+        const disponibles = opcionesAcademicas.filter(item =>
+            item.ciclo_id === ciclo.value && item.nivel_id === nivelAcademico.value
+        );
+        establecerOpciones(gradoAcademico, disponibles, 'Seleccione un grado', 'grado_id', 'grado');
+        seccion.replaceChildren(new Option('Primero seleccione un grado', ''));
+        seccion.disabled = true;
+    }
+
+    function actualizarSecciones() {
+        const disponibles = opcionesAcademicas.filter(item =>
+            item.ciclo_id === ciclo.value &&
+            item.nivel_id === nivelAcademico.value &&
+            item.grado_id === gradoAcademico.value
+        );
+        establecerOpciones(seccion, disponibles, 'Seleccione una sección', 'seccion_id', 'seccion');
+    }
+
+    function restaurarSeccion() {
+        const inicial = seccion.dataset.inicial;
+        if (!inicial) return;
+        const item = opcionesAcademicas.find(opcion =>
+            opcion.seccion_id === inicial && opcion.ciclo_id === ciclo.value
+        );
+        if (!item) return;
+        nivelAcademico.value = item.nivel_id;
+        actualizarGrados();
+        gradoAcademico.value = item.grado_id;
+        actualizarSecciones();
+        seccion.value = item.seccion_id;
     }
 
     function asignarValor(id, valor) {
@@ -960,7 +1018,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tipo.addEventListener('change', function () { busquedaActual++; buscar.disabled = false; actualizarModo(); });
     fechaNacimiento.addEventListener('change', calcularEdad);
-    ciclo.addEventListener('change', actualizarSecciones);
+    ciclo.addEventListener('change', actualizarNiveles);
+    nivelAcademico.addEventListener('change', actualizarGrados);
+    gradoAcademico.addEventListener('change', actualizarSecciones);
     buscar.addEventListener('click', buscarEstudiante);
     identificador.addEventListener('input', function () {
         busquedaActual++;
@@ -1015,7 +1075,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     actualizarModo();
     calcularEdad();
-    actualizarSecciones();
+    actualizarNiveles();
+    restaurarSeccion();
     actualizarResponsables();
 });
 </script>
