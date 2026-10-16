@@ -17,6 +17,7 @@ export default defineConfig({
                 'resources/css/vida-estudiantil.css',
                 'resources/css/noticias.css',
                 'resources/css/contacto.css',
+                'resources/css/direccion/inscripciones/create.css',
             ],
             refresh: true,
         }),
