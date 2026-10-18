@@ -20,6 +20,9 @@ use App\Http\Controllers\Direccion\DocumentoInscripcionController;
 use App\Http\Controllers\Direccion\AgendaController;
 use App\Http\Controllers\Direccion\BloqueHorarioController;
 use App\Http\Controllers\Direccion\CargaAcademicaController;
+use App\Http\Controllers\Direccion\DocenteDisponibilidadController;
+use App\Http\Controllers\Direccion\RestriccionHorarioController;
+
 
 use App\Support\AccesoRoles;
 
@@ -272,6 +275,17 @@ Route::middleware([
                 Route::get('/control', 'control')->name('control.index');
             });
 
+            Route::prefix('docentes/{docente}/disponibilidad')
+                ->name('docentes.disponibilidad.')
+                ->whereNumber('docente')
+                ->controller(DocenteDisponibilidadController::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/', 'store')->name('store');
+                    Route::put('/{disponibilidad}', 'update')->whereNumber('disponibilidad')->name('update');
+                    Route::delete('/{disponibilidad}', 'destroy')->whereNumber('disponibilidad')->name('destroy');
+                });
+
             Route::prefix('docentes')->name('docentes.')
                 ->controller(DocenteController::class)->group(function () {
                     Route::get('/', 'index')->name('index');
@@ -289,6 +303,7 @@ Route::middleware([
                     Route::patch('/asignaciones/guias/{guia}/finalizar', 'finalizarGuia')->whereNumber('guia')->name('guias.finalizar');
                     Route::patch('/asignaciones/{asignacion}/finalizar', 'finalizarAsignacion')->whereNumber('asignacion')->name('asignaciones.finalizar');
                     Route::get('/{docente}', 'show')->whereNumber('docente')->name('show');
+
                 });
 
                 /*
@@ -315,6 +330,14 @@ Route::middleware([
                     ->controller(CargaAcademicaController::class)->group(function () {
                         Route::get('/', 'index')->name('index');
                         Route::post('/', 'guardar')->name('guardar');
+                    });
+
+                Route::prefix('horarios/restricciones')->name('horarios.restricciones.')
+                    ->controller(RestriccionHorarioController::class)->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'store')->name('store');
+                        Route::put('/{restriccion}', 'update')->whereNumber('restriccion')->name('update');
+                        Route::delete('/{restriccion}', 'destroy')->whereNumber('restriccion')->name('destroy');
                     });
 
                 Route::prefix('horarios/bloques')->name('horarios.bloques.')
