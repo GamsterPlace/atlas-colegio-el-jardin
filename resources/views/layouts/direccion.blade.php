@@ -103,10 +103,11 @@
                         ],
                         [
                             'titulo' => 'Gestionar actividades',
-                            'ruta' => 'direccion.agenda.gestion.index',
+                            'ruta' => 'direccion.agenda.gestionar',
                         ],
                     ],
                 ],
+
                 [
                     'id' => 'direccion-horarios',
                     'titulo' => 'Horarios académicos',
@@ -121,11 +122,20 @@
                             'ruta' => 'direccion.horarios.generar',
                         ],
                         [
+                            'titulo' => 'Configurar bloques horarios',
+                            'ruta' => 'direccion.horarios.bloques.index',
+                        ],
+                        [
                             'titulo' => 'Configurar restricciones',
                             'ruta' => 'direccion.horarios.restricciones.index',
                         ],
+                        [
+                            'titulo' => 'Distribución de cursos',//carga academica
+                            'ruta' => 'direccion.horarios.cargas.index',
+                        ],
                     ],
                 ],
+
             ],
         ],
         [

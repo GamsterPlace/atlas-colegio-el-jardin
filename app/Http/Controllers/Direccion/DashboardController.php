@@ -4,8 +4,10 @@ namespace  App\Http\Controllers\Direccion;
 
 use App\Http\Controllers\Controller;
 use App\Models\CicloEscolar;
+use App\Models\Notificacion;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -233,7 +235,7 @@ class DashboardController extends Controller
                     $cicloEscolarId
                 )
                 ->where(
-                    'estado_administrativo',
+                   'estado_administrativo',
                     'VIGENTE'
                 );
 
@@ -294,7 +296,7 @@ class DashboardController extends Controller
                 'pagos_registrados' => $totalPagos,
                 'saldos_pendientes' => $saldoPendiente,
                 'total_recaudado' => round(
-                    (float) $totalRecaudado,
+                   (float) $totalRecaudado,
                     2
                 ),
             ];
@@ -303,10 +305,11 @@ class DashboardController extends Controller
                 'eventos_agenda'
             )
                 ->where(
-                    'ciclo_escolar_id',
+                   'ciclo_escolar_id',
                     $cicloEscolarId
                 )
-                ->where(
+
+               ->where(
                     'estado',
                     'PROGRAMADO'
                 )
@@ -355,6 +358,17 @@ class DashboardController extends Controller
             ->get();
         }
 
+
+       $notificacionesRecientes = Notificacion::query()
+           ->where('usuario_id', auth::id())
+           ->orderByDesc('created_at')
+           ->orderByDesc('id')
+           ->limit(5)
+           ->get();
+        $notificacionesSinLeer = Notificacion::query()
+           ->where('usuario_id', auth::id())
+           ->whereNull('leida_at')
+           ->count();
         return view('direccion.dashboard', [
             'cicloEscolar' => $cicloEscolar,
             'ciclosEscolares' => $ciclosEscolares,
@@ -366,6 +380,8 @@ class DashboardController extends Controller
             'finanzas' => $finanzas,
             'proximasActividades' => $proximasActividades,
             'actividadReciente' => $actividadReciente,
+           'notificacionesRecientes' => $notificacionesRecientes,
+           'notificacionesSinLeer' => $notificacionesSinLeer,
         ]);
     }
 

@@ -1,4 +1,3 @@
-
 @extends('layouts.direccion')
 
 @section('title', 'Panel de Dirección')
@@ -10,6 +9,8 @@
     $finanzas = $finanzas ?? [];
     $proximasActividades = $proximasActividades ?? collect();
     $actividadReciente = $actividadReciente ?? collect();
+    $notificacionesRecientes = $notificacionesRecientes ?? collect();
+    $notificacionesSinLeer = $notificacionesSinLeer ?? 0;
     $ciclosEscolares = $ciclosEscolares ?? collect();
     $esCicloActual = $esCicloActual ?? false;
     $fechaReferenciaAsistencia = $fechaReferenciaAsistencia ?? null;
@@ -581,7 +582,55 @@
 
     </div>
 
-    <section class="atlas-dashboard-panel">
+    <section class="atlas-dashboard-panel atlas-dashboard-notificaciones" aria-labelledby="atlas-notificaciones-titulo">
+   <div class="atlas-dashboard-panel-header">
+       <div>
+            <h3 class="atlas-dashboard-panel-title" id="atlas-notificaciones-titulo">
+                <i class="bi bi-bell"></i> Notificaciones internas
+                @if($notificacionesSinLeer > 0)
+                    <span class="atlas-notificaciones-contador" aria-label="{{ $notificacionesSinLeer }} notificaciones sin leer">{{ $notificacionesSinLeer > 99 ? '99+' : $notificacionesSinLeer }}</span>
+                @endif
+            </h3>
+            <p class="atlas-dashboard-panel-subtitle">Avisos y recordatorios dirigidos a su usuario.</p>
+        </div>
+        @if(\Illuminate\Support\Facades\Route::has('notificaciones.index'))
+            <a href="{{ route('notificaciones.index') }}" class="atlas-dashboard-tag">Ver todas <i class="bi bi-arrow-right"></i></a>
+        @endif
+    </div>
+    <div class="atlas-dashboard-panel-body">
+        @forelse($notificacionesRecientes as $notificacion)
+            <div class="atlas-dashboard-list-item atlas-notificacion-item {{ $notificacion->leida_at ? '' : 'atlas-notificacion-no-leida' }}">
+                <div class="atlas-notificacion-contenido">
+                    <strong class="atlas-dashboard-list-label">
+                        @if(!$notificacion->leida_at)<span class="atlas-notificacion-punto" aria-label="Sin leer"></span>@endif
+                        {{ $notificacion->titulo }}
+                    </strong>
+                    <p class="atlas-dashboard-panel-subtitle">{{ $notificacion->mensaje }}</p>
+                    <span class="atlas-dashboard-list-note">{{ $notificacion->created_at?->locale('es')->translatedFormat('d/m/Y H:i') ?? 'Fecha no disponible' }}</span>
+                </div>
+                <div class="atlas-notificacion-acciones">
+                    @if(!$notificacion->leida_at && \Illuminate\Support\Facades\Route::has('notificaciones.leer'))
+                        <form method="POST" action="{{ route('notificaciones.leer', $notificacion) }}">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="atlas-notificacion-boton" title="Marcar como leída">Marcar leída</button>
+                        </form>
+                    @else
+                        <span class="atlas-notificacion-leida">Leída</span>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="atlas-dashboard-empty">
+                <div class="atlas-dashboard-empty-icon"><i class="bi bi-bell-slash"></i></div>
+                <h4>Sin notificaciones</h4>
+                <p>Los recordatorios y avisos dirigidos a su usuario aparecerán aquí.</p>
+            </div>
+        @endforelse
+    </div>
+</section>
+
+<section class="atlas-dashboard-panel">
 
         <div class="atlas-dashboard-panel-header">
             <div>
@@ -651,5 +700,21 @@
     </section>
 
 </div>
+
+<style>
+.atlas-dashboard-notificaciones .atlas-dashboard-panel-header{gap:12px;flex-wrap:wrap}
+.atlas-dashboard-notificaciones .atlas-dashboard-panel-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.atlas-notificaciones-contador{display:inline-flex;align-items:center;justify-content:center;min-width:25px;height:25px;padding:0 7px;border-radius:999px;background:#dbeafe;color:#164a91;font-size:12px;font-weight:800}
+.atlas-dashboard-notificaciones .atlas-notificacion-item{display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:0}
+.atlas-notificacion-no-leida{border-left:3px solid #2563eb;padding-left:14px;background:rgba(37,99,235,.035)}
+.atlas-notificacion-contenido{flex:1;min-width:0;overflow-wrap:anywhere}
+.atlas-notificacion-contenido .atlas-dashboard-panel-subtitle{margin:5px 0 8px;white-space:pre-line}
+.atlas-notificacion-punto{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:#2563eb;vertical-align:middle}
+.atlas-notificacion-acciones{flex-shrink:0}
+.atlas-notificacion-boton{padding:7px 12px;border:1px solid #bfd4ed;border-radius:8px;background:#fff;color:#17477d;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.atlas-notificacion-boton:hover,.atlas-notificacion-boton:focus-visible{background:#eaf3ff;outline-offset:2px}
+.atlas-notificacion-leida{font-size:12px;color:#64748b}
+@media(max-width:650px){.atlas-dashboard-notificaciones .atlas-notificacion-item{align-items:flex-start;flex-direction:column}.atlas-notificacion-acciones{align-self:flex-start}}
+</style>
 
 @endsection

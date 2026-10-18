@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Institucional\SitioWebController;
 
+use App\Http\Controllers\NotificacionController;
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SeleccionRolController;
 use App\Http\Controllers\Auth\CambioPasswordObligatorioController;
@@ -15,6 +17,9 @@ use App\Http\Controllers\Direccion\ControlInscripcionController;
 use App\Http\Controllers\Direccion\NotaController;
 use App\Http\Controllers\Direccion\InscripcionController;
 use App\Http\Controllers\Direccion\DocumentoInscripcionController;
+use App\Http\Controllers\Direccion\AgendaController;
+use App\Http\Controllers\Direccion\BloqueHorarioController;
+use App\Http\Controllers\Direccion\CargaAcademicaController;
 
 use App\Support\AccesoRoles;
 
@@ -286,6 +291,41 @@ Route::middleware([
                     Route::get('/{docente}', 'show')->whereNumber('docente')->name('show');
                 });
 
+                /*
+                |--------------------------------------------------------------------------
+                | Agenda: gestion, control y eventos
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('agenda')->name('agenda.')->controller(AgendaController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/crear', 'create')->name('create');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('/gestionar', 'gestionar')->name('gestionar');
+                    Route::get('/{evento}/editar', 'edit')->whereNumber('evento')->name('edit');
+                    Route::put('/{evento}', 'update')->whereNumber('evento')->name('update');
+                    Route::patch('/{evento}/estado', 'estado')->whereNumber('evento')->name('estado');
+                    Route::get('/calendario-escolar', 'calendarioEscolar')->name('calendario-escolar.index');
+                    Route::post('/calendario-escolar', 'guardarDiaEscolar')->name('calendario-escolar.store');
+                    Route::delete('/calendario-escolar/{dia}', 'eliminarDiaEscolar')->name('calendario-escolar.destroy');
+                    Route::get('/recordatorios', 'recordatorios')->name('recordatorios.index');
+                });
+
+                Route::prefix('horarios/cargas')->name('horarios.cargas.')
+                    ->controller(CargaAcademicaController::class)->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'guardar')->name('guardar');
+                    });
+
+                Route::prefix('horarios/bloques')->name('horarios.bloques.')
+                    ->controller(BloqueHorarioController::class)->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::get('/crear', 'create')->name('create');
+                        Route::post('/', 'store')->name('store');
+                        Route::get('/{bloque}/editar', 'edit')->whereNumber('bloque')->name('edit');
+                        Route::put('/{bloque}', 'update')->whereNumber('bloque')->name('update');
+                    });
+
         });
 
     /*
@@ -359,5 +399,14 @@ Route::middleware([
             )->name('dashboard');
 
         });
+
+
+    Route::prefix('notificaciones')->name('notificaciones.')
+    ->controller(NotificacionController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::patch('/leer-todas', 'leerTodas')->name('leer-todas');
+        Route::patch('/{notificacion}/leer', 'leer')->whereNumber('notificacion')->name('leer');
+    });
 
 });

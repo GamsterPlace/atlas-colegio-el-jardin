@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/css/noticias.css',
                 'resources/css/contacto.css',
                 'resources/css/direccion/inscripciones/create.css',
+                'resources/css/direccion/agenda.css',
             ],
             refresh: true,
         }),
