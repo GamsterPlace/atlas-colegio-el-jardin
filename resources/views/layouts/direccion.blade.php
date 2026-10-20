@@ -118,10 +118,6 @@
                             'ruta' => 'direccion.horarios.index',
                         ],
                         [
-                            'titulo' => 'Generar horarios',
-                            'ruta' => 'direccion.horarios.generar',
-                        ],
-                        [
                             'titulo' => 'Configurar bloques horarios',
                             'ruta' => 'direccion.horarios.bloques.index',
                         ],

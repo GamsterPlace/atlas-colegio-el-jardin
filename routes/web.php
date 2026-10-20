@@ -22,6 +22,7 @@ use App\Http\Controllers\Direccion\BloqueHorarioController;
 use App\Http\Controllers\Direccion\CargaAcademicaController;
 use App\Http\Controllers\Direccion\DocenteDisponibilidadController;
 use App\Http\Controllers\Direccion\RestriccionHorarioController;
+use App\Http\Controllers\Direccion\HorarioAcademicoController;
 
 
 use App\Support\AccesoRoles;
@@ -340,6 +341,20 @@ Route::middleware([
                         Route::delete('/{restriccion}', 'destroy')->whereNumber('restriccion')->name('destroy');
                     });
 
+                /*
+                |--------------------------------------------------------------------------
+                | Horarios académicos: generación, propuestas y aprobación
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('horarios')->name('horarios.')
+                    ->controller(HorarioAcademicoController::class)->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/generar', 'generar')->name('generar');
+                        Route::post('/guardar', 'guardar')->name('guardar');
+                        Route::post('/{horario}/aprobar', 'aprobar')->whereNumber('horario')->name('aprobar');
+                    });
+
                 Route::prefix('horarios/bloques')->name('horarios.bloques.')
                     ->controller(BloqueHorarioController::class)->group(function () {
                         Route::get('/', 'index')->name('index');
@@ -348,6 +363,11 @@ Route::middleware([
                         Route::get('/{bloque}/editar', 'edit')->whereNumber('bloque')->name('edit');
                         Route::put('/{bloque}', 'update')->whereNumber('bloque')->name('update');
                     });
+
+                    Route::patch('/horarios/{horario}/detalles/{detalle}', [\App\Http\Controllers\Direccion\HorarioAcademicoController::class, 'actualizarDetalle'])
+                    ->whereNumber('horario')
+                    ->whereNumber('detalle')
+                    ->name('horarios.detalles.actualizar');
 
         });
 
