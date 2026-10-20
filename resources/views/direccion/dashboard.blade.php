@@ -1,5 +1,4 @@
 @extends('layouts.direccion')
-
 @section('title', 'Panel de Dirección')
 @section('module-title', 'Panel de Dirección')
 
@@ -14,39 +13,33 @@
     $ciclosEscolares = $ciclosEscolares ?? collect();
     $esCicloActual = $esCicloActual ?? false;
     $fechaReferenciaAsistencia = $fechaReferenciaAsistencia ?? null;
-
     $totalEstudiantes = $indicadores['estudiantes'] ?? null;
     $totalDocentes = $indicadores['docentes'] ?? null;
     $porcentajeAsistencia = $indicadores['asistencia_hoy'] ?? null;
     $totalPagos = $indicadores['pagos'] ?? null;
-
     $presentesHoy = $asistencia['presentes'] ?? null;
     $ausentesHoy = $asistencia['ausentes'] ?? null;
     $tardesHoy = $asistencia['tardes'] ?? null;
     $justificadosHoy = $asistencia['justificados'] ?? null;
     $sinRegistroHoy = $asistencia['sin_registro'] ?? null;
     $registrosHoy = $asistencia['registros_hoy'] ?? null;
-
     $pagosRegistrados = $finanzas['pagos_registrados'] ?? null;
     $saldosPendientes = $finanzas['saldos_pendientes'] ?? null;
     $totalRecaudado = $finanzas['total_recaudado'] ?? null;
-
     $formatoNumero = fn ($valor) => $valor === null
         ? '—'
         : number_format((float) $valor, 0, '.', ',');
-
     $formatoMoneda = fn ($valor) => $valor === null
         ? '—'
         : 'Q ' . number_format((float) $valor, 2, '.', ',');
-
     $formatoPorcentaje = fn ($valor) => $valor === null
         ? '—'
         : number_format((float) $valor, 1, '.', ',') . '%';
-
     $estadisticas = [
         [
             'titulo' => 'Estudiantes inscritos',
-            'valor' => $formatoNumero($totalEstudiantes),
+
+           'valor' => $formatoNumero($totalEstudiantes),
             'descripcion' => 'Matrícula del ciclo escolar',
             'icono' => 'bi-people',
             'color' => '',
@@ -73,7 +66,6 @@
             'color' => 'navy',
         ],
     ];
-
     $accesosRapidos = [
         [
             'titulo' => 'Estudiantes',
@@ -112,7 +104,6 @@
             'ruta' => 'direccion.agenda.index',
         ],
     ];
-
     $estadosAsistencia = [
         [
             'titulo' => 'Presentes',
@@ -140,30 +131,41 @@
             'valor' => $justificadosHoy,
             'descripcion' => 'Ausencias justificadas',
             'icono' => 'bi-file-earmark-check',
-            'color' => 'navy',
+           'color' => 'navy',
         ],
     ];
+
 @endphp
-
 @section('content')
-
 <div class="atlas-dashboard">
+    @if(\Illuminate\Support\Facades\Route::has('direccion.asistencia.index'))
+       <section class="atlas-registro-asistencia-acceso" aria-label="Registro de asistencia estudiantil">
+           <div class="atlas-registro-asistencia-descripcion">
+               <span class="atlas-registro-asistencia-icono"><i class="bi bi-qr-code-scan"></i></span>
+                <div>
+                    <strong>Control de entrada y salida</strong>
+                    <p>Registre la asistencia estudiantil por número de carné o código QR. Tolerancia de entrada hasta las 7:10 a. m.</p>
+                </div>
+            </div>
+            <a class="atlas-registro-asistencia-boton" href="{{ route('direccion.asistencia.index') }}">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Registrar asistencia
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </section>
+    @endif
 
     <div class="atlas-dashboard-hero">
         <div class="atlas-dashboard-hero-content">
-
             <span class="atlas-dashboard-eyebrow">
                 <i class="bi bi-building-check"></i>
                 Gestión institucional
             </span>
-
             <h2>Panel de Dirección</h2>
-
             <p>
                 Supervisión académica, administrativa y operativa
                 del Colegio Mixto El Jardín.
             </p>
-
             <form method="GET" action="{{ url()->current() }}" style="margin-top: 18px; display: flex; flex-wrap: wrap; align-items: end; gap: 12px;">
                 <div style="min-width: 230px; max-width: 360px; flex: 1;">
                     <label for="ciclo_escolar_id" style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Ciclo escolar</label>
@@ -191,73 +193,52 @@
                     </span>
                 @endif
             </form>
-
         </div>
-
         <div class="atlas-dashboard-hero-icon">
             <i class="bi bi-building"></i>
         </div>
     </div>
-
     <div class="atlas-dashboard-stats">
-
         @foreach($estadisticas as $estadistica)
-
             <div class="atlas-dashboard-stat">
-
                 <div>
                     <span class="atlas-dashboard-stat-label">
                         {{ $estadistica['titulo'] }}
                     </span>
-
                     <strong class="atlas-dashboard-stat-value">
                         {{ $estadistica['valor'] }}
                     </strong>
-
                     <span class="atlas-dashboard-stat-note">
                         {{ $estadistica['descripcion'] }}
                     </span>
                 </div>
-
                 <div class="atlas-dashboard-stat-icon {{ $estadistica['color'] }}">
                     <i class="bi {{ $estadistica['icono'] }}"></i>
                 </div>
-
             </div>
-
         @endforeach
-
     </div>
-
     <div class="atlas-dashboard-columns">
-
         <section class="atlas-dashboard-panel">
-
             <div class="atlas-dashboard-panel-header">
-                <div>
+               <div>
                     <h3 class="atlas-dashboard-panel-title">
                         <i class="bi bi-lightning-charge"></i>
                         Accesos rápidos
                     </h3>
-
                     <p class="atlas-dashboard-panel-subtitle">
                         Herramientas principales de gestión institucional.
                     </p>
                 </div>
             </div>
-
             <div class="atlas-dashboard-panel-body">
-
                 <div class="atlas-dashboard-actions">
-
                     @foreach($accesosRapidos as $acceso)
-
                         @php
                             $rutaDisponible = \Illuminate\Support\Facades\Route::has(
                                 $acceso['ruta']
                             );
                         @endphp
-
                         @if($rutaDisponible)
                             <a
                                 href="{{ route($acceso['ruta']) }}"
@@ -270,52 +251,38 @@
                                 title="Módulo pendiente de implementación"
                             >
                         @endif
-
                             <div class="atlas-dashboard-action-icon">
                                 <i class="bi {{ $acceso['icono'] }}"></i>
                             </div>
-
                             <div class="atlas-dashboard-action-text">
                                 <strong>{{ $acceso['titulo'] }}</strong>
-
                                 <span>
                                     {{ $rutaDisponible
                                         ? $acceso['descripcion']
                                         : 'Próximamente' }}
                                 </span>
                             </div>
-
                             <i class="bi {{ $rutaDisponible ? 'bi-arrow-up-right' : 'bi-lock' }} atlas-dashboard-action-arrow"></i>
-
                         @if($rutaDisponible)
                             </a>
                         @else
                             </div>
                         @endif
-
                     @endforeach
-
                 </div>
-
             </div>
-
         </section>
-
         <section class="atlas-dashboard-panel">
-
             <div class="atlas-dashboard-panel-header">
-
                 <div>
                     <h3 class="atlas-dashboard-panel-title">
                         <i class="bi bi-calendar3"></i>
                         Agenda académica
                     </h3>
-
                     <p class="atlas-dashboard-panel-subtitle">
                         Próximas actividades y eventos institucionales.
                     </p>
                 </div>
-
                 @if(\Illuminate\Support\Facades\Route::has('direccion.agenda.index'))
                     <a
                         href="{{ route('direccion.agenda.index') }}"
@@ -324,20 +291,14 @@
                         Ver agenda
                     </a>
                 @endif
-
             </div>
-
             <div class="atlas-dashboard-panel-body">
-
                 @forelse($proximasActividades as $actividad)
-
                     <div class="atlas-dashboard-list-item">
-
                         <div>
                             <strong class="atlas-dashboard-list-label">
                                 {{ data_get($actividad, 'titulo', 'Actividad académica') }}
                             </strong>
-
                             <span class="atlas-dashboard-list-note">
                                 @if(data_get($actividad, 'fecha'))
                                     {{ \Illuminate\Support\Carbon::parse(data_get($actividad, 'fecha'))->locale('es')->translatedFormat('d \d\e F \d\e Y') }}
@@ -345,108 +306,72 @@
                                     Fecha por confirmar
                                 @endif
                             </span>
-
                             @if(data_get($actividad, 'descripcion'))
                                 <p class="atlas-dashboard-panel-subtitle">
                                     {{ data_get($actividad, 'descripcion') }}
                                 </p>
                             @endif
                         </div>
-
                         <div class="atlas-dashboard-action-icon">
                             <i class="bi bi-calendar-event"></i>
                         </div>
-
                     </div>
-
                 @empty
-
                     <div class="atlas-dashboard-empty">
-
                         <div class="atlas-dashboard-empty-icon">
                             <i class="bi bi-calendar-event"></i>
                         </div>
-
                         <h4>Sin actividades disponibles</h4>
-
                         <p>
                             No hay actividades académicas para mostrar
                             en este momento.
                         </p>
-
                     </div>
-
                 @endforelse
-
             </div>
-
         </section>
-
     </div>
-
     <div class="atlas-dashboard-columns equal">
-
         <section class="atlas-dashboard-panel">
-
             <div class="atlas-dashboard-panel-header">
-
                 <div>
                     <h3 class="atlas-dashboard-panel-title">
                         <i class="bi bi-clipboard2-check"></i>
                         Control de asistencia estudiantil
                     </h3>
-
                     <p class="atlas-dashboard-panel-subtitle">
                         {{ $esCicloActual ? 'Resumen de los registros de asistencia del día.' : 'Última fecha de asistencia registrada en el ciclo seleccionado.' }}
                     </p>
                 </div>
-
                 <span class="atlas-dashboard-tag">
                     <i class="bi bi-calendar-check"></i>
                     {{ $fechaReferenciaAsistencia ? \Illuminate\Support\Carbon::parse($fechaReferenciaAsistencia)->format('d/m/Y') : 'Sin registros' }}
                 </span>
-
             </div>
-
             <div class="atlas-dashboard-panel-body">
-
                 <div class="atlas-grid atlas-grid-2">
-
                     @foreach($estadosAsistencia as $estado)
-
                         <div class="atlas-stat-card">
-
                             <div class="atlas-stat-info">
-
                                 <span class="atlas-stat-label">
                                     {{ $estado['titulo'] }}
                                 </span>
-
                                 <strong class="atlas-stat-value">
                                     {{ $formatoNumero($estado['valor']) }}
                                 </strong>
-
                                 <span class="atlas-stat-description">
                                     {{ $estado['descripcion'] }}
                                 </span>
-
                             </div>
-
                             <div class="atlas-stat-icon {{ $estado['color'] }}">
                                 <i class="bi {{ $estado['icono'] }}"></i>
                             </div>
-
                         </div>
-
                     @endforeach
-
                 </div>
-
                 <div class="atlas-table-responsive" style="margin-top: 24px;">
-
                     <table class="atlas-table">
                         <tbody>
-
                             <tr>
                                 <td class="atlas-table-primary">
                                     Estudiantes inscritos
@@ -455,7 +380,6 @@
                                     {{ $formatoNumero($totalEstudiantes) }}
                                 </td>
                             </tr>
-
                             <tr>
                                 <td class="atlas-table-primary">
                                     Asistencias registradas
@@ -464,7 +388,6 @@
                                     {{ $formatoNumero($registrosHoy) }}
                                 </td>
                             </tr>
-
                             <tr>
                                 <td class="atlas-table-primary">
                                     Sin registro de asistencia
@@ -473,7 +396,6 @@
                                     {{ $formatoNumero($sinRegistroHoy) }}
                                 </td>
                             </tr>
-
                             <tr>
                                 <td class="atlas-table-primary">
                                     Porcentaje de asistencia
@@ -482,48 +404,34 @@
                                     {{ $formatoPorcentaje($porcentajeAsistencia) }}
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
-
                 </div>
-
                 <div class="atlas-dashboard-notice" style="margin-top: 24px;">
-
                     <i class="bi bi-info-circle"></i>
-
                     <div>
                         La asistencia efectiva incluye a los estudiantes
                         registrados como presentes y con llegada tarde.
                         Las ausencias justificadas y los estudiantes sin
                         registro se presentan por separado.
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
         <section class="atlas-dashboard-panel">
-
             <div class="atlas-dashboard-panel-header">
                 <div>
                     <h3 class="atlas-dashboard-panel-title">
                         <i class="bi bi-graph-up-arrow"></i>
                         Resumen financiero
                     </h3>
-
                     <p class="atlas-dashboard-panel-subtitle">
                         Información financiera exclusiva del ciclo {{ $cicloEscolar?->nombre ?? "no disponible" }}.
                     </p>
                 </div>
             </div>
-
             <div class="atlas-dashboard-panel-body">
-
                 <div class="atlas-table-responsive">
-
                     <table class="atlas-table">
                         <thead>
                             <tr>
@@ -531,7 +439,6 @@
                                 <th style="text-align: right;">Valor</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr>
                                 <td class="atlas-table-primary">
@@ -541,7 +448,6 @@
                                     {{ $formatoNumero($pagosRegistrados) }}
                                 </td>
                             </tr>
-
                             <tr>
                                 <td class="atlas-table-primary">
                                     Saldos pendientes
@@ -550,7 +456,6 @@
                                     {{ $formatoMoneda($saldosPendientes) }}
                                 </td>
                             </tr>
-
                             <tr>
                                 <td class="atlas-table-primary">
                                     Total recaudado
@@ -560,28 +465,19 @@
                                 </td>
                             </tr>
                         </tbody>
-                    </table>
-
+                   </table>
                 </div>
-
                 <div class="atlas-dashboard-notice" style="margin-top: 24px;">
-
                     <i class="bi bi-shield-lock"></i>
-
                     <div>
                         La información financiera está restringida
                         a los usuarios que tengan autorización
                         para consultar estos datos.
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
     </div>
-
     <section class="atlas-dashboard-panel atlas-dashboard-notificaciones" aria-labelledby="atlas-notificaciones-titulo">
    <div class="atlas-dashboard-panel-header">
        <div>
@@ -629,79 +525,65 @@
         @endforelse
     </div>
 </section>
-
 <section class="atlas-dashboard-panel">
-
         <div class="atlas-dashboard-panel-header">
             <div>
                 <h3 class="atlas-dashboard-panel-title">
                     <i class="bi bi-clock-history"></i>
                     Actividad institucional reciente
                 </h3>
-
                 <p class="atlas-dashboard-panel-subtitle">
                     Movimientos y acontecimientos registrados en ATLAS.
                 </p>
             </div>
         </div>
-
         <div class="atlas-dashboard-panel-body">
-
             @forelse($actividadReciente as $actividad)
-
                 <div class="atlas-dashboard-list-item">
-
                     <div>
                         <strong class="atlas-dashboard-list-label">
                             {{ data_get($actividad, 'titulo', 'Actividad institucional') }}
                         </strong>
-
                         @if(data_get($actividad, 'descripcion'))
                             <p class="atlas-dashboard-panel-subtitle">
                                 {{ data_get($actividad, 'descripcion') }}
                             </p>
                         @endif
-
                         @if(data_get($actividad, 'fecha'))
                             <span class="atlas-dashboard-list-note">
                                 {{ \Illuminate\Support\Carbon::parse(data_get($actividad, 'fecha'))->locale('es')->translatedFormat('d/m/Y H:i') }}
                             </span>
                         @endif
                     </div>
-
                     <div class="atlas-dashboard-action-icon">
                         <i class="bi bi-activity"></i>
                     </div>
-
                 </div>
-
             @empty
-
                 <div class="atlas-dashboard-empty">
-
                     <div class="atlas-dashboard-empty-icon">
                         <i class="bi bi-activity"></i>
                     </div>
-
                     <h4>No hay actividad para mostrar</h4>
-
                     <p>
                         Los movimientos institucionales aparecerán aquí
                         cuando los módulos correspondientes estén
                         conectados al dashboard.
                     </p>
-
                 </div>
-
             @endforelse
-
         </div>
-
     </section>
-
 </div>
-
 <style>
+.atlas-registro-asistencia-acceso{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:22px 24px;margin-bottom:24px;border:1px solid #cbdff2;border-radius:16px;background:linear-gradient(110deg,#f1f7ff,#fff)}
+.atlas-registro-asistencia-descripcion{display:flex;align-items:center;gap:15px;flex:1;min-width:240px}
+.atlas-registro-asistencia-icono{display:grid;place-items:center;width:54px;height:54px;flex:none;border-radius:14px;background:#e1efff;color:#17519b;font-size:26px}
+.atlas-registro-asistencia-descripcion strong{display:block;font-size:17px;color:#183557}
+.atlas-registro-asistencia-descripcion p{margin:5px 0 0;color:#53657a;font-size:13px;line-height:1.5}
+.atlas-registro-asistencia-boton{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:12px 18px;border-radius:10px;background:#15549c;color:white!important;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;transition:background .2s}
+.atlas-registro-asistencia-boton:hover,.atlas-registro-asistencia-boton:focus-visible{background:#0d3971;color:white!important}
+@media(max-width:640px){.atlas-registro-asistencia-boton{width:100%}.atlas-registro-asistencia-acceso{padding:18px}}
 .atlas-dashboard-notificaciones .atlas-dashboard-panel-header{gap:12px;flex-wrap:wrap}
 .atlas-dashboard-notificaciones .atlas-dashboard-panel-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .atlas-notificaciones-contador{display:inline-flex;align-items:center;justify-content:center;min-width:25px;height:25px;padding:0 7px;border-radius:999px;background:#dbeafe;color:#164a91;font-size:12px;font-weight:800}
@@ -716,5 +598,4 @@
 .atlas-notificacion-leida{font-size:12px;color:#64748b}
 @media(max-width:650px){.atlas-dashboard-notificaciones .atlas-notificacion-item{align-items:flex-start;flex-direction:column}.atlas-notificacion-acciones{align-self:flex-start}}
 </style>
-
 @endsection

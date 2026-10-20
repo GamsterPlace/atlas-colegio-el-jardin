@@ -23,9 +23,11 @@
     use App\Http\Controllers\Direccion\DocenteDisponibilidadController;
     use App\Http\Controllers\Direccion\RestriccionHorarioController;
     use App\Http\Controllers\Direccion\HorarioAcademicoController;
+    use App\Http\Controllers\Direccion\AsistenciaConsultaController;
 
 
     use App\Support\AccesoRoles;
+use App\Http\Controllers\Asistencia\RegistroController as AsistenciaRegistroController;
 use App\Http\Controllers\Docente\HorarioController as HorarioDocenteController;
 use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreController;
 
@@ -159,6 +161,31 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
             ->name('direccion.')
             ->middleware('rol:DIRECCION')
             ->group(function () {
+
+                // Consultas y gestión de asistencia de Dirección
+                Route::prefix('asistencia')->name('asistencia.')
+                    ->controller(AsistenciaConsultaController::class)
+                    ->group(function () {
+                        Route::get('/historial', 'historial')->name('historial.index');
+                        Route::get('/justificaciones', 'justificaciones')->name('justificaciones.index');
+                        Route::patch('/justificaciones/{justificacion}/resolver', 'resolver')
+                            ->whereNumber('justificacion')->name('justificaciones.resolver');
+                    });
+
+                Route::prefix('reportes/asistencia')->name('reportes.asistencia.')
+                    ->controller(AsistenciaConsultaController::class)
+                    ->group(function () {
+                        Route::get('/', 'reporte')->name('index');
+                        Route::get('/pdf', 'reportePdf')->name('pdf');
+                    });
+
+                Route::prefix('asistencia')->name('asistencia.')->controller(AsistenciaRegistroController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/registrar', 'registrar')->name('registrar');
+                    Route::post('/justificar', 'justificar')->name('justificar');
+                    Route::get('/qr/{estudiante}', 'generarQr')->whereNumber('estudiante')->name('qr');
+                });
+
 
                 Route::get(
                     '/dashboard',
@@ -402,12 +429,19 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
             ->middleware('rol:SECRETARIA')
             ->group(function () {
 
+                Route::prefix('asistencia')->name('asistencia.')->controller(AsistenciaRegistroController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/registrar', 'registrar')->name('registrar');
+                    Route::post('/justificar', 'justificar')->name('justificar');
+                    Route::get('/qr/{estudiante}', 'generarQr')->whereNumber('estudiante')->name('qr');
+                });
+
+
                 Route::view(
                     '/dashboard',
                     'secretaria.dashboard'
                 )->name('dashboard');
 
-                Route::get('/horarios', [HorarioDocenteController::class, 'index'])->name('horarios.index');
 
             });
 
@@ -422,10 +456,19 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
             ->middleware('rol:DOCENTE')
             ->group(function () {
 
+                Route::prefix('asistencia')->name('asistencia.')->controller(AsistenciaRegistroController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/registrar', 'registrar')->name('registrar');
+                    Route::post('/justificar', 'justificar')->name('justificar');
+                });
+
+
                 Route::view(
                     '/dashboard',
                     'secretaria.dashboard'
                 )->name('dashboard');
+
+                Route::get('/horarios', [HorarioDocenteController::class, 'index'])->name('horarios.index');
 
             });
 
