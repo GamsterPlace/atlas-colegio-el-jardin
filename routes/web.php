@@ -162,6 +162,36 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
             ->middleware('rol:DIRECCION')
             ->group(function () {
 
+                // Panel financiero de Dirección
+                Route::get('/finanzas', [\App\Http\Controllers\Direccion\FinanzasController::class, 'index'])
+                    ->name('finanzas.index');
+
+                // Configuración financiera exclusiva de Dirección
+                Route::prefix('finanzas/configuracion')->name('finanzas.configuracion.')
+                    ->controller(\App\Http\Controllers\Direccion\ConfiguracionFinancieraController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/conceptos', 'guardarConcepto')->name('conceptos.store');
+                        Route::patch('/conceptos/{concepto}', 'actualizarConcepto')->whereNumber('concepto')->name('conceptos.update');
+                        Route::post('/colegiaturas', 'guardarColegiatura')->name('colegiaturas.store');
+                        Route::post('/mora', 'guardarMora')->name('mora.store');
+                    });
+
+                // Autorizaciones individuales de descuentos y tarifas especiales
+                Route::prefix('finanzas/beneficios')
+                    ->name('finanzas.beneficios.')
+                    ->controller(\App\Http\Controllers\Direccion\BeneficioFinancieroController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'store')->name('store');
+                    });
+
+                // Cuenta financiera permanente por estudiante
+                Route::get('/finanzas/estados-cuenta', [\App\Http\Controllers\Direccion\FinanzasController::class, 'estadosCuenta'])
+                    ->name('finanzas.estados-cuenta.index');
+                Route::get('/finanzas/estados-cuenta/{estudiante}', [\App\Http\Controllers\Direccion\FinanzasController::class, 'estadoCuenta'])
+                    ->whereNumber('estudiante')->name('finanzas.estados-cuenta.show');
+
                 // Consultas y gestión de asistencia de Dirección
                 Route::prefix('asistencia')->name('asistencia.')
                     ->controller(AsistenciaConsultaController::class)

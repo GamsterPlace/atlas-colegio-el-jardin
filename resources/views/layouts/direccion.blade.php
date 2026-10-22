@@ -166,6 +166,10 @@
                             'ruta' => 'direccion.finanzas.index',
                         ],
                         [
+                            'titulo' => 'Configuración financiera',
+                            'ruta' => 'direccion.finanzas.configuracion.index',
+                        ],
+                        [
                             'titulo' => 'Cuentas por cobrar',
                             'ruta' => 'direccion.finanzas.cuentas.index',
                         ],
