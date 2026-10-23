@@ -206,6 +206,15 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
                         Route::patch('/{pago}/anular', 'anular')->whereNumber('pago')->name('anular');
                     });
 
+                // Reportes financieros de Dirección (consulta y exportación CSV)
+                Route::prefix('finanzas/reportes')
+                    ->name('finanzas.reportes.')
+                    ->controller(\App\Http\Controllers\Direccion\ReportesFinancierosController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::get('/exportar', 'exportar')->name('exportar');
+                    });
+
                 // Cuenta financiera permanente por estudiante
                 Route::get('/finanzas/estados-cuenta', [\App\Http\Controllers\Direccion\FinanzasController::class, 'estadosCuenta'])
                     ->name('finanzas.estados-cuenta.index');
