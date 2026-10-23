@@ -186,6 +186,16 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
                         Route::post('/', 'store')->name('store');
                     });
 
+                // Cuentas por cobrar: listado, detalle y anulación protegida
+                Route::prefix('finanzas/cuentas')
+                    ->name('finanzas.cuentas.')
+                    ->controller(\App\Http\Controllers\Direccion\CuentasPorCobrarController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::get('/{cuenta}', 'show')->whereNumber('cuenta')->name('show');
+                        Route::patch('/{cuenta}/anular', 'anular')->whereNumber('cuenta')->name('anular');
+                    });
+
                 // Cuenta financiera permanente por estudiante
                 Route::get('/finanzas/estados-cuenta', [\App\Http\Controllers\Direccion\FinanzasController::class, 'estadosCuenta'])
                     ->name('finanzas.estados-cuenta.index');
