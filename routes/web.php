@@ -196,6 +196,16 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
                         Route::patch('/{cuenta}/anular', 'anular')->whereNumber('cuenta')->name('anular');
                     });
 
+                // Registro y anulación de pagos de Dirección
+                Route::prefix('finanzas/pagos')
+                    ->name('finanzas.pagos.')
+                    ->controller(\App\Http\Controllers\Direccion\RegistroPagosController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/', 'store')->name('store');
+                        Route::patch('/{pago}/anular', 'anular')->whereNumber('pago')->name('anular');
+                    });
+
                 // Cuenta financiera permanente por estudiante
                 Route::get('/finanzas/estados-cuenta', [\App\Http\Controllers\Direccion\FinanzasController::class, 'estadosCuenta'])
                     ->name('finanzas.estados-cuenta.index');
