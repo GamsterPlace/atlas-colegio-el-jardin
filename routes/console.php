@@ -12,3 +12,8 @@ Artisan::command('inspire', function () {
 Schedule::command('agenda:enviar-recordatorios')
     ->everyMinute()
     ->withoutOverlapping();
+
+Schedule::command('uniformes:expirar-pedidos')
+    ->everyMinute()
+    ->withoutOverlapping();
+

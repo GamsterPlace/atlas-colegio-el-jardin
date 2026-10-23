@@ -457,6 +457,30 @@ use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreControlle
                         ->whereNumber('detalle')
                         ->name('horarios.detalles.actualizar');
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Inventario y tienda escolar - Uniformes (Dirección)
+                    |--------------------------------------------------------------------------
+                    */
+                    Route::prefix('inventario/uniformes')
+                        ->name('inventario.uniformes.')
+                        ->controller(\App\Http\Controllers\Direccion\UniformeController::class)
+                        ->group(function () {
+                            Route::get('/', 'index')->name('index');
+                            Route::post('/productos', 'crear')->name('crear');
+                            Route::put('/productos/{uniforme}', 'actualizar')->whereNumber('uniforme')->name('actualizar');
+                            Route::patch('/productos/{uniforme}/estado', 'estado')->whereNumber('uniforme')->name('estado');
+                            Route::post('/ingresos', 'ingreso')->name('ingreso');
+                            Route::post('/pedidos', 'pedido')->name('pedido');
+                            Route::post('/pedidos/{pedido}/procesar', 'procesar')->whereNumber('pedido')->name('procesar');
+                            Route::post('/pedidos/{pedido}/preparado', 'preparado')->whereNumber('pedido')->name('preparado');
+                            Route::post('/pedidos/{pedido}/pago', 'pago')->whereNumber('pedido')->name('pago');
+                            Route::post('/pedidos/{pedido}/entregar', 'entregar')->whereNumber('pedido')->name('entregar');
+                            Route::post('/pedidos/{pedido}/anular', 'anular')->whereNumber('pedido')->name('anular');
+                            Route::get('/pedidos/{pedido}/identificacion', 'etiqueta')->whereNumber('pedido')->name('etiqueta');
+                            Route::get('/pedidos/{pedido}/comprobante', 'comprobante')->whereNumber('pedido')->name('comprobante');
+                        });
+
             });
 
         /*
