@@ -28,7 +28,7 @@ class UniformeController extends Controller
     public function index()
     {
         $this->tienda->expirar();
-        $uniformes = Uniforme::query()->with(['categoria_uniforme', 'tallas.r9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8'])->orderBy('nombre')->get();
+       $uniformes = Uniforme::query()->with(['categoria_uniforme', 'tallas.existenciaUniforme'])->orderBy('nombre')->get();
         $productos = $uniformes->flatMap(fn ($u) => $u->tallas);
         $disponibles = $productos->mapWithKeys(fn ($p) => [$p->id => $this->tienda->disponibles($p->id)]);
         return view('direccion.inventario.uniformes.index', [
@@ -265,7 +265,7 @@ class UniformeController extends Controller
         return back()->with('success', 'Pedido en proceso.')->with('abrir_pedido', $pedido->id);
     }
 
-    public function preparado(PedidoUniforme $pedido): RedirectResponse
+    public function preparado(PedidoUniforme $pedido): \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
     {
         DB::transaction(function () use ($pedido) {
             $pedido = PedidoUniforme::query()->lockForUpdate()->findOrFail($pedido->id);
@@ -273,7 +273,13 @@ class UniformeController extends Controller
             $pedido->update(['estado' => 'PREPARADO', 'preparado_por' => Auth::id(), 'preparado_at' => now()]);
             $this->tienda->evento($pedido, 'PREPARADO', 'Nota media carta disponible para impresión.', Auth::id());
         });
-        return redirect()->route('direccion.inventario.uniformes.etiqueta', $pedido->id)->with('success', 'Pedido preparado.');
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Pedido preparado correctamente.',
+                'etiqueta_url' => route('direccion.inventario.uniformes.etiqueta', $pedido->id),
+            ]);
+        }
+        return back()->with('success', 'Pedido preparado correctamente. La etiqueta está disponible para imprimir.');
     }
 
     public function pago(Request $request, PedidoUniforme $pedido): RedirectResponse

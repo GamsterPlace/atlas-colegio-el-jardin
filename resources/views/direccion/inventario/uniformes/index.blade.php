@@ -37,7 +37,11 @@
                     @elseif($pedido->estado === 'PREPARADO')
                         <button class="btn" type="button" onclick="abrirDialogo('pedido-{{ $pedido->id }}')">Entregar</button>
                     @endif
-                    <a class="btn secondary" target="_blank" href="{{ route('direccion.inventario.uniformes.comprobante', $pedido) }}">Comprobante</a>
+                    @if($pedido->estado === 'PREPARADO')
+                        <a class="btn secondary" target="_blank" rel="noopener" href="{{ route('direccion.inventario.uniformes.etiqueta', $pedido) }}"><i class="bi bi-printer"></i> Etiqueta de identificación</a>
+                    @else
+                        <a class="btn secondary" target="_blank" rel="noopener" href="{{ route('direccion.inventario.uniformes.comprobante', $pedido) }}">Comprobante</a>
+                    @endif
                 </div>
             </div>
             <dialog id="pedido-{{ $pedido->id }}"><div class="dialog-inner">
@@ -49,7 +53,7 @@
                 </tbody></table></div>
                 @if($pedido->observaciones)<p class="notice">Observaciones: {{ $pedido->observaciones }}</p>@endif
                 @if($pedido->estado === 'EN_PROCESO')
-                    <form method="POST" action="{{ route('direccion.inventario.uniformes.preparado', $pedido) }}" class="actions">@csrf<button class="btn">Preparado · Generar identificación PDF</button></form>
+                    <form method="POST" action="{{ route('direccion.inventario.uniformes.preparado', $pedido) }}" class="actions form-preparado">@csrf<button class="btn" type="submit">Preparado · Abrir etiqueta PDF</button></form>
                 @elseif($pedido->estado === 'PREPARADO')
                     <div class="actions"><a class="btn secondary" target="_blank" href="{{ route('direccion.inventario.uniformes.etiqueta', $pedido) }}">Imprimir identificación (media carta horizontal)</a></div>
                     @if($pedido->estado_pago === 'PENDIENTE')
@@ -126,7 +130,7 @@
                     <div class="product-body"><strong>{{ $uniforme->nombre }}</strong><p class="muted">{{ $uniforme->color }}</p>
                         <div class="size-entry size-head"><span>Talla</span><span>Físico</span><span>Ingreso</span></div>
                         @foreach($uniforme->tallas as $t)
-                        <div class="size-entry"><strong>{{ $t->talla }}</strong><span>{{ $t->r9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8?->cantidad ?? 0 }}</span><input aria-label="Unidades que ingresan talla {{ $t->talla }} de {{ $uniforme->nombre }}" name="cantidades[{{ $t->id }}]" type="number" min="0" step="1" value="0"></div>
+                        <div class="size-entry"><strong>{{ $t->talla }}</strong><span>{{ $t->rahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8?->cantidad ?? 0 }}</span><input aria-label="Unidades que ingresan talla {{ $t->talla }} de {{ $uniforme->nombre }}" name="cantidades[{{ $t->id }}]" type="number" min="0" step="1" value="0"></div>
                         @endforeach
                     </div>
                 </article>
@@ -171,6 +175,49 @@
 @endsection
 @push('scripts')
 <script>
+// El pedido se prepara sin abandonar ATLAS y la etiqueta se abre en otra pestaña.
+document.querySelectorAll('.form-preparado').forEach(form => {
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+        const button = form.querySelector('button[type="submit"]');
+        if (button.disabled) return;
+        const pdfTab = window.open('about:blank', '_blank');
+        if (!pdfTab) {
+            mostrarErrorPreparacion('Permite las ventanas emergentes para ATLAS e inténtalo de nuevo.');
+            return;
+        }
+        pdfTab.document.title = 'Preparando etiqueta';
+        pdfTab.document.body.textContent = 'Generando etiqueta de identificación…';
+        button.disabled = true;
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST', body: new FormData(form), credentials: 'same-origin',
+                headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}
+            });
+            const result = await response.json();
+            if (!response.ok || !result.etiqueta_url) {
+                throw new Error(result.message || Object.values(result.errors || {}).flat().join(' ') || 'No se pudo preparar el pedido.');
+            }
+            pdfTab.location.replace(result.etiqueta_url);
+            window.location.reload();
+        } catch (error) {
+            pdfTab.close();
+            button.disabled = false;
+            mostrarErrorPreparacion(error.message || 'No se pudo completar la operación.');
+        }
+    });
+});
+function mostrarErrorPreparacion(message) {
+    let aviso = document.getElementById('error-preparacion');
+    if (!aviso) {
+        aviso = document.createElement('div');
+        aviso.id = 'error-preparacion'; aviso.className = 'alert error';
+        document.querySelector('.atlas-uniformes').prepend(aviso);
+    }
+    aviso.textContent = message;
+    aviso.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
 function desplazarCarrusel(id,direccion){const el=document.getElementById(id);if(!el)return;const card=el.querySelector('.product-card');el.scrollBy({left:direccion*((card?.getBoundingClientRect().width||280)+16),behavior:'smooth'});}
 let formularioConfirmacion=null;
 document.addEventListener('click',function(event){

@@ -11,7 +11,11 @@ class ProductoUniforme extends Model
 {
     protected $table = 'productos_uniformes';
     public $timestamps = false;
-    protected $fillable = ['uniforme_id', 'categoria_uniforme_id', 'sku', 'nombre', 'talla', 'color', 'precio_referencia', 'activo'];
+
+    protected $fillable = [
+        'uniforme_id', 'categoria_uniforme_id', 'sku', 'nombre',
+        'talla', 'color', 'precio_referencia', 'activo',
+    ];
 
     protected function casts(): array
     {
@@ -28,7 +32,7 @@ class ProductoUniforme extends Model
         return $this->belongsTo(CategoriaUniforme::class, 'categoria_uniforme_id');
     }
 
-    public function r9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8(): HasOne
+    public function existenciaUniforme(): HasOne
     {
         return $this->hasOne(ExistenciaUniforme::class, 'producto_uniforme_id');
     }
