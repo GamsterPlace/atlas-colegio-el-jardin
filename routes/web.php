@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Institucional\SitioWebController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\ComunicadoRecibidoController;
+use App\Http\Controllers\Direccion\ComunicadoController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SeleccionRolController;
@@ -836,6 +838,57 @@ Route::middleware([
                         ->name('pdf');
                 });
 
+            /*
+            |--------------------------------------------------------------------------
+            | Comunicados institucionales - Dirección
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('comunicados')
+                ->name('comunicados.')
+                ->controller(ComunicadoController::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/crear', 'create')->name('create');
+                    Route::post('/', 'store')->name('store');
+
+                    // Consulta AJAX para el selector de estudiantes por ciclo.
+                    // Se conserva en routes/web.php para evitar otro controlador.
+                    Route::get('/estudiantes', function (\Illuminate\Http\Request $request) {
+                        $datos = $request->validate([
+                            'ciclo_escolar_id' => ['required', 'integer', 'exists:ciclos_escolares,id'],
+                        ]);
+
+                        $cicloId = (int) $datos['ciclo_escolar_id'];
+                        $estudiantes = \App\Models\Estudiante::query()
+                            ->whereHas('registrosInscripcion', function ($q) use ($cicloId) {
+                                $q->where('ciclo_escolar_id', $cicloId)
+                                    ->where('estado', 'COMPLETADA')
+                                    ->where(function ($sub) {
+                                        $sub->whereNull('fecha_fin')
+                                            ->orWhereDate('fecha_fin', '>=', today());
+                                    });
+                            })
+                            ->orderBy('apellidos')
+                            ->orderBy('nombres')
+                            ->get(['id', 'nombres', 'apellidos', 'numero_carnet'])
+                            ->map(fn ($e) => [
+                                'id' => $e->id,
+                                'nombre' => $e->nombre_completo,
+                                'numero_carnet' => $e->numero_carnet ?: 'No asignado',
+                            ]);
+
+                        return response()->json([
+                            'success' => true,
+                            'total' => $estudiantes->count(),
+                            'estudiantes' => $estudiantes->values(),
+                        ]);
+                    })->name('estudiantes');
+
+                    Route::get('/{comunicado}', 'show')
+                        ->whereNumber('comunicado')->name('show');
+                });
+
         });
 
     /*
@@ -948,6 +1001,21 @@ Route::middleware([
                 '/horarios',
                 [HorarioPadreController::class, 'index']
             )->name('horarios.index');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Comunicados recibidos - Todos los roles autenticados
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('comunicados')
+        ->name('comunicados.')
+        ->controller(ComunicadoRecibidoController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('recibidos');
+            Route::get('/{comunicado}', 'show')
+                ->whereNumber('comunicado')->name('ver');
         });
 
     /*

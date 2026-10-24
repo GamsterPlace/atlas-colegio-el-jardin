@@ -359,8 +359,8 @@
 </style>
 
 @php
-    $totalDestinatarios = (int) $totalDestinatarios;
-    $totalLecturas = (int) $totalLecturas;
+    $totalDestinatarios = max(0, (int) $totalDestinatarios);
+    $totalLecturas = min($totalDestinatarios, max(0, (int) $totalLecturas));
 
     $totalPendientes = max(
         0,

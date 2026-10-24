@@ -796,7 +796,9 @@
                             >
 
                             <div class="atlas-comunicado-crear-list"
-                                 id="atlasListaEstudiantes">
+                                 id="atlasListaEstudiantes"
+                                 aria-live="polite"
+                                 data-url-estudiantes="{{ route('direccion.comunicados.estudiantes') }}">
 
                                 @forelse($estudiantes as $estudiante)
                                     <label class="atlas-comunicado-crear-check"
@@ -1030,6 +1032,120 @@ document.addEventListener('DOMContentLoaded', function () {
 
     actualizarConteos();
 
+    /*
+     * Consultar estudiantes del ciclo seleccionado sin recargar
+     * ni perder el título, contenido o los demás destinatarios.
+     */
+    const listaEstudiantes = document.getElementById('atlasListaEstudiantes');
+    const buscadorEstudiantes = document.querySelector(
+        '[data-buscar-lista="atlasListaEstudiantes"]'
+    );
+    let solicitudEstudiantes = null;
+    let versionSolicitud = 0;
+    let cargandoEstudiantes = false;
+
+    function mostrarMensajeEstudiantes(mensaje) {
+        listaEstudiantes.replaceChildren();
+        const elemento = document.createElement('div');
+        elemento.className = 'atlas-comunicado-crear-list-empty';
+        elemento.textContent = mensaje;
+        listaEstudiantes.appendChild(elemento);
+        actualizarConteos();
+    }
+
+    function mostrarEstudiantes(estudiantes) {
+        listaEstudiantes.replaceChildren();
+
+        if (!estudiantes.length) {
+            mostrarMensajeEstudiantes(
+                'No hay estudiantes con inscripción completada en este ciclo.'
+            );
+            return;
+        }
+
+        estudiantes.forEach(function (estudiante) {
+            const etiqueta = document.createElement('label');
+            etiqueta.className = 'atlas-comunicado-crear-check';
+            etiqueta.setAttribute('data-item-busqueda', '');
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'estudiante_ids[]';
+            checkbox.value = String(estudiante.id);
+            checkbox.addEventListener('change', actualizarConteos);
+
+            const datos = document.createElement('span');
+            const nombre = document.createElement('strong');
+            nombre.textContent = estudiante.nombre;
+            const carne = document.createElement('small');
+            carne.textContent = 'Carné: ' + estudiante.numero_carnet;
+
+            datos.appendChild(nombre);
+            datos.appendChild(carne);
+            etiqueta.appendChild(checkbox);
+            etiqueta.appendChild(datos);
+            listaEstudiantes.appendChild(etiqueta);
+        });
+
+        if (buscadorEstudiantes) {
+            buscadorEstudiantes.dispatchEvent(new Event('input'));
+        }
+        actualizarConteos();
+    }
+
+    async function cargarEstudiantesDelCiclo() {
+        if (!listaEstudiantes || !ciclo) return;
+
+        const versionActual = ++versionSolicitud;
+        if (solicitudEstudiantes) solicitudEstudiantes.abort();
+
+        if (!ciclo.value) {
+            cargandoEstudiantes = false;
+            mostrarMensajeEstudiantes(
+                'Seleccione un ciclo escolar para consultar estudiantes.'
+            );
+            return;
+        }
+
+        solicitudEstudiantes = new AbortController();
+        cargandoEstudiantes = true;
+        mostrarMensajeEstudiantes('Consultando estudiantes...');
+
+        try {
+            const url = new URL(
+                listaEstudiantes.dataset.urlEstudiantes,
+                window.location.origin
+            );
+            url.searchParams.set('ciclo_escolar_id', ciclo.value);
+
+            const respuesta = await fetch(url.toString(), {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                credentials: 'same-origin',
+                signal: solicitudEstudiantes.signal
+            });
+            if (!respuesta.ok) {
+                throw new Error('Error al consultar estudiantes');
+            }
+            const datos = await respuesta.json();
+            if (versionActual !== versionSolicitud) return;
+            mostrarEstudiantes(datos.estudiantes || []);
+        } catch (error) {
+            if (error.name === 'AbortError' || versionActual !== versionSolicitud) {
+                return;
+            }
+            mostrarMensajeEstudiantes(
+                'No fue posible cargar los estudiantes. Cambie nuevamente el ciclo para reintentar.'
+            );
+        } finally {
+            if (versionActual === versionSolicitud) {
+                cargandoEstudiantes = false;
+            }
+        }
+    }
+
+    ciclo.addEventListener('change', cargarEstudiantesDelCiclo);
+
     function destinatariosSeleccionados() {
         return formulario.querySelectorAll(
             'input[name="grupos[]"]:checked,' +
@@ -1096,6 +1212,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     botonRevisar.addEventListener('click', function () {
+        if (cargandoEstudiantes) {
+            mostrarError('Espere a que termine la consulta de estudiantes.');
+            return;
+        }
         if (!formulario.reportValidity()) {
             return;
         }

@@ -11,11 +11,11 @@ use App\Models\Grado;
 use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
 
 class ComunicadoController extends Controller
 {
@@ -23,7 +23,10 @@ class ComunicadoController extends Controller
     {
         $filtros = $request->validate([
             'buscar' => ['nullable', 'string', 'max:150'],
-            'estado' => ['nullable', 'string', 'max:30'],
+            'estado' => [
+                'nullable',
+                Rule::in(['PUBLICADO', 'BORRADOR', 'CANCELADO']),
+            ],
         ]);
 
         $comunicados = Comunicado::query()
@@ -46,22 +49,24 @@ class ComunicadoController extends Controller
                 fn ($query, $estado) =>
                     $query->where('estado', $estado)
             )
+            ->orderByDesc('publicado_at')
             ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
 
         $resumen = [
-            'total' => Comunicado::count(),
-            'publicados' => Comunicado::where(
-                'estado',
-                'PUBLICADO'
-            )->count(),
-            'destinatarios' => DB::table(
-                'comunicado_destinatarios'
-            )->whereNotNull('usuario_id')->count(),
-            'lecturas' => DB::table(
-                'lecturas_comunicados'
-            )->count(),
+            'total' => Comunicado::query()->count(),
+
+            'publicados' => Comunicado::query()
+                ->where('estado', 'PUBLICADO')
+                ->count(),
+
+            'destinatarios' => DB::table('comunicado_destinatarios')
+                ->whereNotNull('usuario_id')
+                ->count(),
+
+            'lecturas' => DB::table('lecturas_comunicados')
+                ->count(),
         ];
 
         return view(
@@ -70,38 +75,69 @@ class ComunicadoController extends Controller
         );
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        $datos = $request->validate([
+            'ciclo_escolar_id' => [
+                'nullable',
+                'integer',
+                'exists:ciclos_escolares,id',
+            ],
+        ]);
+
         $ciclos = CicloEscolar::query()
             ->orderByDesc('fecha_inicio')
             ->get();
 
-        $cicloId = $ciclos
-            ->firstWhere('estado', 'ACTIVO')?->id
-            ?? $ciclos->first()?->id;
+        $cicloId = isset($datos['ciclo_escolar_id'])
+            ? (int) $datos['ciclo_escolar_id']
+            : (
+                $ciclos->firstWhere('estado', 'ACTIVO')?->id
+                ?? $ciclos->first()?->id
+            );
 
         $grados = Grado::query()
             ->with('nivel')
             ->where('activo', true)
+            ->orderBy('nivel_id')
             ->orderBy('orden')
             ->get();
 
         $docentes = Docente::query()
             ->with('personal.persona.registrosUsuario')
             ->where('activo', true)
-            ->whereHas('personal', fn ($q) =>
-                $q->where('activo', true)
+            ->whereHas(
+                'personal',
+                fn ($q) => $q->where('activo', true)
             )
             ->get();
 
+        /*
+         * Para seleccionar destinatarios de un ciclo futuro
+         * no se exige que haya comenzado la fecha de clases.
+         *
+         * Solo se consideran inscripciones completadas
+         * que no hayan finalizado.
+         */
         $estudiantes = Estudiante::query()
-            ->whereHas('registrosInscripcion', function ($q) use ($cicloId) {
-                $q->vigentes();
+            ->whereHas(
+                'registrosInscripcion',
+                function ($q) use ($cicloId) {
+                    $q->where('estado', 'COMPLETADA')
+                        ->where(function ($consulta) {
+                            $consulta->whereNull('fecha_fin')
+                                ->orWhereDate(
+                                    'fecha_fin',
+                                    '>=',
+                                    today()
+                                );
+                        });
 
-                if ($cicloId) {
-                    $q->where('ciclo_escolar_id', $cicloId);
+                    if ($cicloId) {
+                        $q->where('ciclo_escolar_id', $cicloId);
+                    }
                 }
-            })
+            )
             ->orderBy('apellidos')
             ->orderBy('nombres')
             ->get();
@@ -127,21 +163,25 @@ class ComunicadoController extends Controller
                 'min:5',
                 'max:190',
             ],
+
             'contenido' => [
                 'required',
                 'string',
                 'min:10',
                 'max:20000',
             ],
+
             'ciclo_escolar_id' => [
                 'nullable',
                 'integer',
                 'exists:ciclos_escolares,id',
             ],
+
             'grupos' => [
                 'nullable',
                 'array',
             ],
+
             'grupos.*' => [
                 'string',
                 'distinct',
@@ -152,28 +192,34 @@ class ComunicadoController extends Controller
                     'PADRES',
                 ]),
             ],
+
             'grado_ids' => [
                 'nullable',
                 'array',
             ],
+
             'grado_ids.*' => [
                 'integer',
                 'distinct',
                 'exists:grados,id',
             ],
+
             'estudiante_ids' => [
                 'nullable',
                 'array',
             ],
+
             'estudiante_ids.*' => [
                 'integer',
                 'distinct',
                 'exists:estudiantes,id',
             ],
+
             'docente_ids' => [
                 'nullable',
                 'array',
             ],
+
             'docente_ids.*' => [
                 'integer',
                 'distinct',
@@ -197,17 +243,20 @@ class ComunicadoController extends Controller
             ]);
         }
 
-        $requiereCiclo = in_array('PADRES', $grupos, true)
+        $requiereCiclo =
+            in_array('COMUNIDAD', $grupos, true)
+            || in_array('PADRES', $grupos, true)
             || !empty($gradoIds)
             || !empty($estudianteIds);
 
-        if (
-            $requiereCiclo
-            && empty($datos['ciclo_escolar_id'])
-        ) {
+        $cicloId = isset($datos['ciclo_escolar_id'])
+            ? (int) $datos['ciclo_escolar_id']
+            : null;
+
+        if ($requiereCiclo && !$cicloId) {
             throw ValidationException::withMessages([
                 'ciclo_escolar_id' =>
-                    'Seleccione el ciclo escolar para enviar comunicados a padres.',
+                    'Seleccione el ciclo escolar para los destinatarios de padres de familia.',
             ]);
         }
 
@@ -216,13 +265,13 @@ class ComunicadoController extends Controller
             $gradoIds,
             $estudianteIds,
             $docenteIds,
-            $datos['ciclo_escolar_id'] ?? null
+            $cicloId
         );
 
         if (empty($destinatarios)) {
             throw ValidationException::withMessages([
                 'grupos' =>
-                    'No se encontraron destinatarios activos y autorizados.',
+                    'No se encontraron destinatarios activos y autorizados para los criterios seleccionados.',
             ]);
         }
 
@@ -230,12 +279,14 @@ class ComunicadoController extends Controller
             $datos,
             $destinatarios
         ) {
-            $comunicado = Comunicado::create([
+            $fecha = now();
+
+            $comunicado = Comunicado::query()->create([
                 'titulo' => trim($datos['titulo']),
                 'contenido' => trim($datos['contenido']),
                 'estado' => 'PUBLICADO',
-                'publicado_at' => now(),
-                'creado_por' => auth::id(),
+                'publicado_at' => $fecha,
+                'creado_por' => Auth::id(),
             ]);
 
             foreach (array_chunk($destinatarios, 500) as $lote) {
@@ -247,6 +298,8 @@ class ComunicadoController extends Controller
                         'rol_id' => null,
                         'seccion_id' => null,
                         'usuario_id' => $usuarioId,
+                        'created_at' => $fecha,
+                        'updated_at' => $fecha,
                     ];
                 }
 
@@ -264,12 +317,13 @@ class ComunicadoController extends Controller
                         'mensaje' => $comunicado->titulo,
                         'tipo' => 'COMUNICADO',
                         'enlace' => route(
-                            'comunicados.recibidos.show',
+                            'comunicados.ver',
                             $comunicado->id,
                             false
                         ),
                         'leida_at' => null,
-                        'created_at' => now(),
+                        'created_at' => $fecha,
+                        'updated_at' => $fecha,
                     ];
                 }
 
@@ -281,10 +335,7 @@ class ComunicadoController extends Controller
         }, 3);
 
         return redirect()
-            ->route(
-                'direccion.comunicados.show',
-                $comunicado->id
-            )
+            ->route('direccion.comunicados.show', $comunicado->id)
             ->with(
                 'success',
                 'Comunicado publicado correctamente para '
@@ -346,7 +397,9 @@ class ComunicadoController extends Controller
             ->whereNotNull('usuario_id')
             ->count();
 
-        $totalLecturas = DB::table('lecturas_comunicados')
+        $totalLecturas = DB::table(
+            'lecturas_comunicados'
+        )
             ->where('comunicado_id', $comunicado->id)
             ->count();
 
@@ -372,22 +425,42 @@ class ComunicadoController extends Controller
 
         $agregar = function ($nuevos) use (&$ids): void {
             foreach ($nuevos as $id) {
-                $ids[(int) $id] = (int) $id;
+                $id = (int) $id;
+
+                if ($id > 0) {
+                    $ids[$id] = $id;
+                }
             }
         };
 
+        /*
+         * Comunidad educativa:
+         * usuarios institucionales activos más padres
+         * autorizados del ciclo seleccionado.
+         */
         if (in_array('COMUNIDAD', $grupos, true)) {
             $agregar(
                 Usuario::query()
                     ->where('activo', true)
-                    ->whereHas('roles', fn ($q) =>
-                        $q->where('activo', true)
-                            ->where('codigo', '!=', 'PADRE_FAMILIA')
+                    ->whereHas(
+                        'roles',
+                        function ($q) {
+                            $q->where('activo', true)
+                                ->where(
+                                    'codigo',
+                                    '!=',
+                                    'PADRE_FAMILIA'
+                                );
+                        }
                     )
                     ->pluck('id')
             );
         }
 
+        /*
+         * Docentes activos:
+         * todos o únicamente los seleccionados.
+         */
         if (
             in_array('DOCENTES', $grupos, true)
             || !empty($docenteIds)
@@ -413,9 +486,14 @@ class ComunicadoController extends Controller
                 $consulta->whereIn('d.id', $docenteIds);
             }
 
-            $agregar($consulta->distinct()->pluck('u.id'));
+            $agregar(
+                $consulta->distinct()->pluck('u.id')
+            );
         }
 
+        /*
+         * Personal institucional activo.
+         */
         if (in_array('PERSONAL', $grupos, true)) {
             $agregar(
                 DB::table('personal as pe')
@@ -432,27 +510,25 @@ class ComunicadoController extends Controller
             );
         }
 
-        $requierePadres = in_array(
-            'COMUNIDAD',
-            $grupos,
-            true
-        ) || in_array(
-            'PADRES',
-            $grupos,
-            true
-        ) || !empty($gradoIds)
-          || !empty($estudianteIds);
+        /*
+         * Padres de familia:
+         * - responsables activos;
+         * - autorización de comunicados;
+         * - vínculo vigente;
+         * - usuario activo;
+         * - inscripción completada en el ciclo;
+         * - sin duplicados por hermanos.
+         */
+        $requierePadres =
+            in_array('COMUNIDAD', $grupos, true)
+            || in_array('PADRES', $grupos, true)
+            || !empty($gradoIds)
+            || !empty($estudianteIds);
 
         if ($requierePadres && $cicloId) {
-            $todosPadres = in_array(
-                'COMUNIDAD',
-                $grupos,
-                true
-            ) || in_array(
-                'PADRES',
-                $grupos,
-                true
-            );
+            $todosPadres =
+                in_array('COMUNIDAD', $grupos, true)
+                || in_array('PADRES', $grupos, true);
 
             $consulta = DB::table('inscripciones as i')
                 ->join(
@@ -481,7 +557,6 @@ class ComunicadoController extends Controller
                 )
                 ->where('i.ciclo_escolar_id', $cicloId)
                 ->where('i.estado', 'COMPLETADA')
-                ->whereDate('i.fecha_inicio', '<=', today())
                 ->where(function ($q) {
                     $q->whereNull('i.fecha_fin')
                         ->orWhereDate(
@@ -491,7 +566,11 @@ class ComunicadoController extends Controller
                         );
                 })
                 ->where('er.autorizado_comunicados', true)
-                ->whereDate('er.fecha_inicio', '<=', today())
+                ->whereDate(
+                    'er.fecha_inicio',
+                    '<=',
+                    today()
+                )
                 ->where(function ($q) {
                     $q->whereNull('er.fecha_fin')
                         ->orWhereDate(
@@ -509,7 +588,10 @@ class ComunicadoController extends Controller
                     $estudianteIds
                 ) {
                     if (!empty($gradoIds)) {
-                        $q->whereIn('s.grado_id', $gradoIds);
+                        $q->whereIn(
+                            's.grado_id',
+                            $gradoIds
+                        );
                     }
 
                     if (!empty($estudianteIds)) {
@@ -528,8 +610,12 @@ class ComunicadoController extends Controller
                 });
             }
 
-            $agregar($consulta->distinct()->pluck('u.id'));
+            $agregar(
+                $consulta->distinct()->pluck('u.id')
+            );
         }
+
+        sort($ids, SORT_NUMERIC);
 
         return array_values($ids);
     }

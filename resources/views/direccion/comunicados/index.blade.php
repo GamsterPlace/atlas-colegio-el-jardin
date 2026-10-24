@@ -488,16 +488,6 @@
                         @selected(($filtros['estado'] ?? '') === 'PUBLICADO')>
                         Publicado
                     </option>
-
-                    <option value="BORRADOR"
-                        @selected(($filtros['estado'] ?? '') === 'BORRADOR')>
-                        Borrador
-                    </option>
-
-                    <option value="CANCELADO"
-                        @selected(($filtros['estado'] ?? '') === 'CANCELADO')>
-                        Cancelado
-                    </option>
                 </select>
             </div>
 
@@ -532,8 +522,8 @@
                 <tbody>
                     @forelse($comunicados as $comunicado)
                         @php
-                            $totalDestinatarios = (int) $comunicado->total_destinatarios;
-                            $totalLecturas = (int) $comunicado->total_lecturas;
+                            $totalDestinatarios = (int) ($comunicado->total_destinatarios ?? 0);
+                            $totalLecturas = (int) ($comunicado->total_lecturas ?? 0);
 
                             $porcentajeLectura = $totalDestinatarios > 0
                                 ? min(100, round(($totalLecturas / $totalDestinatarios) * 100))
