@@ -198,7 +198,7 @@
                         ],
                         [
                             'titulo' => 'Movimientos de inventario',
-                            'ruta' => 'direccion.inventario.movimientos.index',
+                            'ruta' => 'direccion.inventario.uniformes.movimientos.index',
                         ],
                     ],
                 ],
