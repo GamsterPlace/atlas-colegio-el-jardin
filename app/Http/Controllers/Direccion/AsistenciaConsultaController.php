@@ -45,7 +45,7 @@ class AsistenciaConsultaController extends Controller
 
         return AsistenciaEstudiante::query()
             ->with(['inscripcion.estudiante','inscripcion.seccion.grado.nivel','registrado_por',
-                'r9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8'])
+                'registrosJustificacionAsistencia'])
             ->when($cicloId, fn($q) => $q->whereHas('inscripcion',
                 fn($i) => $i->where('ciclo_escolar_id', $cicloId)))
             ->when($filtros['seccion_id'] ?? null, fn($q,$v) => $q->whereHas('inscripcion',

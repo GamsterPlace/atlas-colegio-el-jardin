@@ -130,7 +130,7 @@
                     <div class="product-body"><strong>{{ $uniforme->nombre }}</strong><p class="muted">{{ $uniforme->color }}</p>
                         <div class="size-entry size-head"><span>Talla</span><span>Físico</span><span>Ingreso</span></div>
                         @foreach($uniforme->tallas as $t)
-                        <div class="size-entry"><strong>{{ $t->talla }}</strong><span>{{ $t->rahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8?->cantidad ?? 0 }}</span><input aria-label="Unidades que ingresan talla {{ $t->talla }} de {{ $uniforme->nombre }}" name="cantidades[{{ $t->id }}]" type="number" min="0" step="1" value="0"></div>
+                        <div class="size-entry"><strong>{{ $t->talla }}</strong><span>{{ $t->existenciaUniforme?->cantidad ?? 0 }}</span><input aria-label="Unidades que ingresan talla {{ $t->talla }} de {{ $uniforme->nombre }}" name="cantidades[{{ $t->id }}]" type="number" min="0" step="1" value="0"></div>
                         @endforeach
                     </div>
                 </article>

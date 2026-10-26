@@ -30,10 +30,12 @@ class ComunicadoController extends Controller
         ]);
 
         $comunicados = Comunicado::query()
-            ->with('creado_por.persona')
+            ->with('autor.persona')
             ->withCount([
-                'r9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 as total_destinatarios',
-                'r9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 as total_lecturas',
+                'registrosComunicadoDestinatario as total_destinatarios' => function ($query) {
+                    $query->whereNotNull('usuario_id');
+                },
+                'registrosLecturaComunicado as total_lecturas',
             ])
             ->when(
                 $filtros['buscar'] ?? null,
@@ -346,7 +348,7 @@ class ComunicadoController extends Controller
 
     public function show(Comunicado $comunicado): View
     {
-        $comunicado->load('creado_por.persona');
+        $comunicado->load('autor.persona');
 
         $destinatarios = DB::table(
             'comunicado_destinatarios as cd'

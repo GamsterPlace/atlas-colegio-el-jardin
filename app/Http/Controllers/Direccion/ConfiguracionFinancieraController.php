@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Direccion;
 
 use App\Http\Controllers\Controller;
+use App\Models\BitacoraAuditoria;
 use App\Models\CicloEscolar;
 use App\Models\ConceptoCobro;
 use App\Models\ConfiguracionColegiatura;
@@ -30,6 +31,7 @@ class ConfiguracionFinancieraController extends Controller
         return view('direccion.finanzas.configuracion.index', [
             'ciclos' => $ciclos,
             'cicloId' => $cicloId,
+            'cicloSeleccionado' => $ciclos->firstWhere('id', $cicloId),
             'conceptos' => ConceptoCobro::query()->orderBy('nombre')->get(),
             'niveles' => Nivel::query()->orderBy('orden')->get(),
             'grados' => Grado::query()->orderBy('orden')->get(),
@@ -44,6 +46,21 @@ class ConfiguracionFinancieraController extends Controller
         ]);
     }
 
+    private function registrarAuditoria(Request $request, string $accion, string $entidad, int $id, ?array $antes, array $despues): void
+    {
+        BitacoraAuditoria::query()->create([
+            'usuario_id' => auth::id(),
+            'accion' => $accion,
+            'entidad' => $entidad,
+            'entidad_id' => $id,
+            'datos_anteriores' => $antes,
+            'datos_nuevos' => $despues,
+            'motivo' => 'Actualización de configuración financiera autorizada por Dirección.',
+            'ip' => $request->ip(),
+            'fecha_evento' => now('America/Guatemala'),
+        ]);
+    }
+
     public function guardarConcepto(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -53,7 +70,10 @@ class ConfiguracionFinancieraController extends Controller
         ]);
         $data['codigo'] = strtoupper($data['codigo']);
         $data['activo'] = true;
-        ConceptoCobro::query()->create($data);
+        DB::transaction(function () use ($data, $request) {
+            $concepto = ConceptoCobro::query()->create($data);
+            $this->registrarAuditoria($request, 'CREAR', 'conceptos_cobro', $concepto->id, null, $concepto->getAttributes());
+        });
         return back()->with('success', 'Concepto de cobro registrado.');
     }
 
@@ -63,13 +83,17 @@ class ConfiguracionFinancieraController extends Controller
             'nombre' => ['required', 'string', 'max:150'],
             'activo' => ['required', 'boolean'],
         ]);
-        $concepto->update($data);
+        DB::transaction(function () use ($concepto, $data, $request) {
+            $antes = $concepto->getAttributes();
+            $concepto->update($data);
+            $this->registrarAuditoria($request, 'ACTUALIZAR', 'conceptos_cobro', $concepto->id, $antes, $concepto->fresh()->getAttributes());
+        });
         return back()->with('success', 'Concepto actualizado.');
     }
 
-    public function guardarColegiatura(Request $request): RedirectResponse
+    private function datosColegiatura(Request $request): array
     {
-        $data = $request->validate([
+        return $request->validate([
             'ciclo_escolar_id' => ['required', 'integer', 'exists:ciclos_escolares,id'],
             'concepto_cobro_id' => ['required', 'integer', 'exists:conceptos_cobro,id'],
             'nivel_id' => ['required', 'integer', 'exists:niveles,id'],
@@ -80,7 +104,13 @@ class ConfiguracionFinancieraController extends Controller
             'dia_vencimiento' => ['nullable', 'integer', 'between:1,31'],
             'vigente_desde' => ['nullable', 'date'],
             'vigente_hasta' => ['nullable', 'date', 'after_or_equal:vigente_desde'],
+        ], [
+            'vigente_hasta.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha inicial.',
         ]);
+    }
+
+    private function validarColegiatura(array $data, ?int $excluirId = null): array
+    {
         $concepto = ConceptoCobro::findOrFail($data['concepto_cobro_id']);
         if (!$concepto->activo || $concepto->tipo !== 'COLEGIATURA') {
             throw ValidationException::withMessages(['concepto_cobro_id' => 'Seleccione un concepto activo de colegiatura.']);
@@ -89,38 +119,63 @@ class ConfiguracionFinancieraController extends Controller
             throw ValidationException::withMessages(['grado_id' => 'El grado no pertenece al nivel seleccionado.']);
         }
         $ciclo = CicloEscolar::findOrFail($data['ciclo_escolar_id']);
-        $desde = $data['vigente_desde'] ?? $ciclo->fecha_inicio->toDateString();
-        $hasta = $data['vigente_hasta'] ?? $ciclo->fecha_fin->toDateString();
-        if ($desde < $ciclo->fecha_inicio->toDateString() || $hasta > $ciclo->fecha_fin->toDateString()) {
-            throw ValidationException::withMessages(['vigente_desde' => 'La vigencia debe estar dentro del ciclo escolar.']);
+        $inicio = $ciclo->fecha_inicio->toDateString();
+        $fin = $ciclo->fecha_fin->toDateString();
+        $desde = $data['vigente_desde'] ?? $inicio;
+        $hasta = $data['vigente_hasta'] ?? $fin;
+        if ($desde > $hasta) {
+            throw ValidationException::withMessages(['vigente_hasta' => 'La fecha final debe ser igual o posterior a la fecha inicial.']);
         }
-        $gradoId = $data['grado_id'] ?? null;
+        if ($desde < $inicio || $hasta > $fin) {
+            throw ValidationException::withMessages(['vigente_desde' => "La vigencia debe estar comprendida entre {$inicio} y {$fin}, fechas del ciclo seleccionado."]);
+        }
         $conflicto = ConfiguracionColegiatura::query()
             ->where('ciclo_escolar_id', $ciclo->id)
             ->where('concepto_cobro_id', $concepto->id)
             ->where('nivel_id', $data['nivel_id'])
-            ->where('grado_id', $gradoId)
-            ->where(function ($q) use ($desde, $hasta) {
-                $q->where(function ($q) use ($hasta) {
-                    $q->whereNull('vigente_desde')->orWhereDate('vigente_desde', '<=', $hasta);
-                })->where(function ($q) use ($desde) {
-                    $q->whereNull('vigente_hasta')->orWhereDate('vigente_hasta', '>=', $desde);
-                });
-            })->exists();
+            ->where('grado_id', $data['grado_id'] ?? null)
+            ->when($excluirId, fn ($q) => $q->where('id', '!=', $excluirId))
+            ->where(fn ($q) => $q->whereNull('vigente_desde')->orWhereDate('vigente_desde', '<=', $hasta))
+            ->where(fn ($q) => $q->whereNull('vigente_hasta')->orWhereDate('vigente_hasta', '>=', $desde))
+            ->exists();
         if ($conflicto) {
-            throw ValidationException::withMessages(['vigente_desde' => 'Ya existe una configuración para este nivel, grado y concepto con vigencia superpuesta.']);
+            throw ValidationException::withMessages(['vigente_desde' => 'Ya existe una configuración para el mismo concepto, nivel y grado con fechas superpuestas.']);
         }
-        $data['grado_id'] = $gradoId;
+        $data['grado_id'] = $data['grado_id'] ?? null;
         $data['vigente_desde'] = $desde;
         $data['vigente_hasta'] = $hasta;
         $data['meses_cobro'] = array_values(array_map('intval', $data['meses_cobro'] ?? []));
-        ConfiguracionColegiatura::query()->create($data);
+        return $data;
+    }
+
+    public function guardarColegiatura(Request $request): RedirectResponse
+    {
+        $data = $this->validarColegiatura($this->datosColegiatura($request));
+        DB::transaction(function () use ($data, $request) {
+            $registro = ConfiguracionColegiatura::query()->create($data);
+            $this->registrarAuditoria($request, 'CREAR', 'configuraciones_colegiaturas', $registro->id, null, $registro->getAttributes());
+        });
         return back()->with('success', 'Configuración de colegiatura guardada.');
     }
 
-    public function guardarMora(Request $request): RedirectResponse
+    public function actualizarColegiatura(Request $request, ConfiguracionColegiatura $colegiatura): RedirectResponse
     {
-        $data = $request->validate([
+        $data = $this->datosColegiatura($request);
+        if ((int) $data['ciclo_escolar_id'] !== (int) $colegiatura->ciclo_escolar_id) {
+            throw ValidationException::withMessages(['ciclo_escolar_id' => 'No se permite trasladar una configuración a otro ciclo escolar.']);
+        }
+        $data = $this->validarColegiatura($data, $colegiatura->id);
+        DB::transaction(function () use ($colegiatura, $data, $request) {
+            $antes = $colegiatura->getAttributes();
+            $colegiatura->update($data);
+            $this->registrarAuditoria($request, 'ACTUALIZAR', 'configuraciones_colegiaturas', $colegiatura->id, $antes, $colegiatura->fresh()->getAttributes());
+        });
+        return back()->with('success', 'Colegiatura actualizada. Las obligaciones ya emitidas no fueron modificadas.');
+    }
+
+    private function datosMora(Request $request): array
+    {
+        return $request->validate([
             'ciclo_escolar_id' => ['required', 'integer', 'exists:ciclos_escolares,id'],
             'concepto_cobro_id' => ['required', 'integer', 'exists:conceptos_cobro,id'],
             'tipo' => ['required', Rule::in(['FIJO', 'PORCENTAJE'])],
@@ -129,14 +184,24 @@ class ConfiguracionFinancieraController extends Controller
             'periodicidad' => ['required', Rule::in(['UNICA', 'DIARIA', 'MENSUAL'])],
             'vigente_desde' => ['required', 'date'],
             'vigente_hasta' => ['nullable', 'date', 'after_or_equal:vigente_desde'],
-        ]);
-        if ($data['tipo'] === 'PORCENTAJE' && $data['valor'] > 100) {
+        ], ['vigente_hasta.after_or_equal' => 'La fecha final debe ser igual o posterior a la inicial.']);
+    }
+
+    private function validarMora(array $data, ?int $excluirId = null): array
+    {
+        if ($data['tipo'] === 'PORCENTAJE' && (float) $data['valor'] > 100) {
             throw ValidationException::withMessages(['valor' => 'El porcentaje no puede superar 100.']);
         }
         $ciclo = CicloEscolar::findOrFail($data['ciclo_escolar_id']);
-        $fin = $data['vigente_hasta'] ?? $ciclo->fecha_fin->toDateString();
-        if ($data['vigente_desde'] < $ciclo->fecha_inicio->toDateString() || $fin > $ciclo->fecha_fin->toDateString()) {
-            throw ValidationException::withMessages(['vigente_desde' => 'La vigencia de la mora debe estar dentro del ciclo escolar.']);
+        $inicio = $ciclo->fecha_inicio->toDateString();
+        $finCiclo = $ciclo->fecha_fin->toDateString();
+        $desde = $data['vigente_desde'];
+        $hasta = $data['vigente_hasta'] ?? $finCiclo;
+        if ($desde > $hasta) {
+            throw ValidationException::withMessages(['vigente_hasta' => 'La fecha final debe ser igual o posterior a la inicial.']);
+        }
+        if ($desde < $inicio || $hasta > $finCiclo) {
+            throw ValidationException::withMessages(['vigente_desde' => "La vigencia de mora debe estar comprendida entre {$inicio} y {$finCiclo}."]);
         }
         if (!ConceptoCobro::whereKey($data['concepto_cobro_id'])->where('activo', true)->exists()) {
             throw ValidationException::withMessages(['concepto_cobro_id' => 'Seleccione un concepto de cobro activo.']);
@@ -144,14 +209,40 @@ class ConfiguracionFinancieraController extends Controller
         $conflicto = ConfiguracionMora::query()
             ->where('ciclo_escolar_id', $data['ciclo_escolar_id'])
             ->where('concepto_cobro_id', $data['concepto_cobro_id'])
-            ->whereDate('vigente_desde', '<=', $fin)
-            ->where(fn ($q) => $q->whereNull('vigente_hasta')->orWhereDate('vigente_hasta', '>=', $data['vigente_desde']))
+            ->when($excluirId, fn ($q) => $q->where('id', '!=', $excluirId))
+            ->whereDate('vigente_desde', '<=', $hasta)
+            ->where(fn ($q) => $q->whereNull('vigente_hasta')->orWhereDate('vigente_hasta', '>=', $desde))
             ->exists();
         if ($conflicto) {
-            throw ValidationException::withMessages(['vigente_desde' => 'Ya existe una regla de mora vigente para este concepto en las fechas indicadas.']);
+            throw ValidationException::withMessages(['vigente_desde' => 'Ya existe una regla de mora superpuesta para este concepto.']);
         }
+        return $data;
+    }
+
+    public function guardarMora(Request $request): RedirectResponse
+    {
+        $data = $this->validarMora($this->datosMora($request));
         $data['aprobado_por'] = auth::id();
-        ConfiguracionMora::query()->create($data);
-        return back()->with('success', 'Regla de mora autorizada y registrada. No se generaron recargos retroactivos.');
+        DB::transaction(function () use ($data, $request) {
+            $registro = ConfiguracionMora::query()->create($data);
+            $this->registrarAuditoria($request, 'CREAR', 'configuraciones_mora', $registro->id, null, $registro->getAttributes());
+        });
+        return back()->with('success', 'Regla de mora registrada. No se generaron recargos retroactivos.');
+    }
+
+    public function actualizarMora(Request $request, ConfiguracionMora $mora): RedirectResponse
+    {
+        $data = $this->datosMora($request);
+        if ((int) $data['ciclo_escolar_id'] !== (int) $mora->ciclo_escolar_id) {
+            throw ValidationException::withMessages(['ciclo_escolar_id' => 'No se permite trasladar una regla de mora a otro ciclo.']);
+        }
+        $data = $this->validarMora($data, $mora->id);
+        $data['aprobado_por'] = auth::id();
+        DB::transaction(function () use ($mora, $data, $request) {
+            $antes = $mora->getAttributes();
+            $mora->update($data);
+            $this->registrarAuditoria($request, 'ACTUALIZAR', 'configuraciones_mora', $mora->id, $antes, $mora->fresh()->getAttributes());
+        });
+        return back()->with('success', 'Regla de mora actualizada. Los recargos existentes no fueron modificados.');
     }
 }

@@ -1,4 +1,3 @@
-
 @extends('layouts.direccion')
 
 @section('title', 'Historial de comunicados')
@@ -529,11 +528,11 @@
                                 ? min(100, round(($totalLecturas / $totalDestinatarios) * 100))
                                 : 0;
 
-                            $autor = $comunicado->creado_por?->persona;
+                            $autor = $comunicado->autor?->persona;
 
                             $nombreAutor = $autor
                                 ? trim($autor->nombres . ' ' . $autor->apellidos)
-                                : ($comunicado->creado_por?->nombre_usuario ?? 'No disponible');
+                                : ($comunicado->autor?->nombre_usuario ?? 'No disponible');
 
                             $estado = strtoupper((string) $comunicado->estado);
 

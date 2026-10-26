@@ -28,6 +28,11 @@ use App\Http\Controllers\Direccion\HorarioAcademicoController;
 use App\Http\Controllers\Direccion\AsistenciaConsultaController;
 use App\Http\Controllers\Direccion\MovimientoInventarioController;
 
+
+
+
+use App\Http\Controllers\Secretaria\PublicacionController as PublicacionSecretaria;
+
 use App\Http\Controllers\Asistencia\RegistroController as AsistenciaRegistroController;
 use App\Http\Controllers\Docente\HorarioController as HorarioDocenteController;
 use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreController;
@@ -194,9 +199,15 @@ Route::middleware([
 
                     Route::post('/colegiaturas', 'guardarColegiatura')
                         ->name('colegiaturas.store');
+                    Route::patch('/colegiaturas/{colegiatura}', 'actualizarColegiatura')
+                        ->whereNumber('colegiatura')
+                        ->name('colegiaturas.update');
 
                     Route::post('/mora', 'guardarMora')
                         ->name('mora.store');
+                    Route::patch('/mora/{mora}', 'actualizarMora')
+                        ->whereNumber('mora')
+                        ->name('mora.update');
                 });
 
             Route::prefix('finanzas/beneficios')
@@ -306,6 +317,23 @@ Route::middleware([
                         ->whereNumber('justificacion')
                         ->name('justificaciones.resolver');
                 });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reportes academicos y administrativos - Direccion
+            |--------------------------------------------------------------------------
+            | Modulos independientes. Conservan el reporte de asistencia existente.
+            */
+
+            Route::get(
+                '/reportes/academicos',
+                [\App\Http\Controllers\Direccion\ReporteAcademicoController::class, 'index']
+            )->name('reportes.academicos.index');
+
+            Route::get(
+                '/reportes/administrativos',
+                [\App\Http\Controllers\Direccion\ReporteAdministrativoController::class, 'index']
+            )->name('reportes.administrativos.index');
 
             Route::prefix('reportes/asistencia')
                 ->name('reportes.asistencia.')
@@ -844,6 +872,23 @@ Route::middleware([
             |--------------------------------------------------------------------------
             */
 
+            /* Noticias institucionales - Direccion */
+            Route::prefix('publicaciones')
+                ->name('publicaciones.')
+                ->controller(\App\Http\Controllers\Direccion\PublicacionController::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/crear', 'create')->name('create');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('/{publicacion}/editar', 'edit')->whereNumber('publicacion')->name('edit');
+                    Route::put('/{publicacion}', 'update')->whereNumber('publicacion')->name('update');
+                    Route::patch('/{publicacion}/publicar', 'publicar')->whereNumber('publicacion')->name('publicar');
+                    Route::patch('/{publicacion}/archivar', 'archivar')->whereNumber('publicacion')->name('archivar');
+                    Route::patch('/{publicacion}/borrador', 'borrador')->whereNumber('publicacion')->name('borrador');
+                    Route::delete('/{publicacion}/archivos/{archivo}', 'eliminarArchivo')
+                        ->whereNumber('publicacion')->whereNumber('archivo')->name('archivos.destroy');
+                });
+
             Route::prefix('comunicados')
                 ->name('comunicados.')
                 ->controller(ComunicadoController::class)
@@ -936,6 +981,23 @@ Route::middleware([
                     Route::get('/qr/{estudiante}', 'generarQr')
                         ->whereNumber('estudiante')
                         ->name('qr');
+                });
+
+            /* Noticias institucionales - Secretaria */
+            Route::prefix('publicaciones')
+                ->name('publicaciones.')
+                ->controller(PublicacionSecretaria::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/crear', 'create')->name('create');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('/{publicacion}/editar', 'edit')->whereNumber('publicacion')->name('edit');
+                    Route::put('/{publicacion}', 'update')->whereNumber('publicacion')->name('update');
+                    Route::patch('/{publicacion}/publicar', 'publicar')->whereNumber('publicacion')->name('publicar');
+                    Route::patch('/{publicacion}/archivar', 'archivar')->whereNumber('publicacion')->name('archivar');
+                    Route::patch('/{publicacion}/borrador', 'borrador')->whereNumber('publicacion')->name('borrador');
+                    Route::delete('/{publicacion}/archivos/{archivo}', 'eliminarArchivo')
+                        ->whereNumber('publicacion')->whereNumber('archivo')->name('archivos.destroy');
                 });
 
             Route::view(

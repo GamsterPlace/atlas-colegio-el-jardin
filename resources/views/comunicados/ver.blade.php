@@ -1,4 +1,3 @@
-
 @extends('layouts.atlas')
 
 @section('title', 'Leer comunicado')
@@ -243,7 +242,7 @@
 </style>
 
 @php
-    $autorPersona = $comunicado->creado_por?->persona;
+    $autorPersona = $comunicado->autor?->persona;
 
     $nombreAutor = $autorPersona
         ? trim(
@@ -251,7 +250,7 @@
             ($autorPersona->apellidos ?? '')
         )
         : (
-            $comunicado->creado_por?->nombre_usuario
+            $comunicado->autor?->nombre_usuario
             ?? 'Dirección institucional'
         );
 

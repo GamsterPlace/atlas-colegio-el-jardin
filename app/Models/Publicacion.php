@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Publicacion extends Model
 {
     protected $table = 'publicaciones';
-
-    public $timestamps = false;
 
     protected $fillable = [
         'titulo',
         'slug',
         'resumen',
         'contenido',
+        'categoria',
+        'destacada',
         'estado',
         'publicada_at',
         'autor_id',
@@ -26,6 +25,7 @@ class Publicacion extends Model
     protected function casts(): array
     {
         return [
+            'destacada' => 'boolean',
             'publicada_at' => 'datetime',
         ];
     }

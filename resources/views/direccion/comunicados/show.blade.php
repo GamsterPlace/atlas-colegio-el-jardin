@@ -1,4 +1,3 @@
-
 @extends('layouts.direccion')
 
 @section('title', 'Detalle del comunicado')
@@ -376,14 +375,14 @@
         )
         : 0;
 
-    $autorPersona = $comunicado->creado_por?->persona;
+    $autorPersona = $comunicado->autor?->persona;
 
     $nombreAutor = $autorPersona
         ? trim(
             ($autorPersona->nombres ?? '') . ' ' .
             ($autorPersona->apellidos ?? '')
         )
-        : ($comunicado->creado_por?->nombre_usuario ?? 'No disponible');
+        : ($comunicado->autor?->nombre_usuario ?? 'No disponible');
 
     $estadoComunicado = strtoupper(
         (string) $comunicado->estado
