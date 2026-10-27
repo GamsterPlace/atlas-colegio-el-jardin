@@ -28,16 +28,13 @@ use App\Http\Controllers\Direccion\HorarioAcademicoController;
 use App\Http\Controllers\Direccion\AsistenciaConsultaController;
 use App\Http\Controllers\Direccion\MovimientoInventarioController;
 
-
-
-
-use App\Http\Controllers\Secretaria\PublicacionController as PublicacionSecretaria;
-
 use App\Http\Controllers\Asistencia\RegistroController as AsistenciaRegistroController;
 use App\Http\Controllers\Docente\HorarioController as HorarioDocenteController;
 use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreController;
 
 use App\Support\AccesoRoles;
+use App\Http\Controllers\Administrador\UsuarioController;
+use App\Http\Controllers\Administrador\DocumentoUsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -199,15 +196,9 @@ Route::middleware([
 
                     Route::post('/colegiaturas', 'guardarColegiatura')
                         ->name('colegiaturas.store');
-                    Route::patch('/colegiaturas/{colegiatura}', 'actualizarColegiatura')
-                        ->whereNumber('colegiatura')
-                        ->name('colegiaturas.update');
 
                     Route::post('/mora', 'guardarMora')
                         ->name('mora.store');
-                    Route::patch('/mora/{mora}', 'actualizarMora')
-                        ->whereNumber('mora')
-                        ->name('mora.update');
                 });
 
             Route::prefix('finanzas/beneficios')
@@ -317,23 +308,6 @@ Route::middleware([
                         ->whereNumber('justificacion')
                         ->name('justificaciones.resolver');
                 });
-
-            /*
-            |--------------------------------------------------------------------------
-            | Reportes academicos y administrativos - Direccion
-            |--------------------------------------------------------------------------
-            | Modulos independientes. Conservan el reporte de asistencia existente.
-            */
-
-            Route::get(
-                '/reportes/academicos',
-                [\App\Http\Controllers\Direccion\ReporteAcademicoController::class, 'index']
-            )->name('reportes.academicos.index');
-
-            Route::get(
-                '/reportes/administrativos',
-                [\App\Http\Controllers\Direccion\ReporteAdministrativoController::class, 'index']
-            )->name('reportes.administrativos.index');
 
             Route::prefix('reportes/asistencia')
                 ->name('reportes.asistencia.')
@@ -951,6 +925,17 @@ Route::middleware([
                 '/dashboard',
                 'administrador.dashboard'
             )->name('dashboard');
+
+            Route::prefix('usuarios')->name('usuarios.')->group(function () {
+                Route::get('/', [UsuarioController::class, 'index'])->name('index');
+                Route::get('/crear', [UsuarioController::class, 'create'])->name('create');
+                Route::post('/', [UsuarioController::class, 'store'])->name('store');
+                Route::get('/{usuario}/editar', [UsuarioController::class, 'edit'])->whereNumber('usuario')->name('edit');
+                Route::put('/{usuario}', [UsuarioController::class, 'update'])->whereNumber('usuario')->name('update');
+                Route::post('/{usuario}/restablecer-password', [UsuarioController::class, 'resetPassword'])->whereNumber('usuario')->name('reset-password');
+                Route::get('/{usuario}/credenciales', [DocumentoUsuarioController::class, 'credenciales'])->whereNumber('usuario')->name('credenciales');
+                Route::get('/{usuario}', [UsuarioController::class, 'show'])->whereNumber('usuario')->name('show');
+            });
         });
 
     /*
@@ -986,7 +971,7 @@ Route::middleware([
             /* Noticias institucionales - Secretaria */
             Route::prefix('publicaciones')
                 ->name('publicaciones.')
-                ->controller(PublicacionSecretaria::class)
+                ->controller(\App\Http\Controllers\Secretaria\PublicacionController::class)
                 ->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::get('/crear', 'create')->name('create');

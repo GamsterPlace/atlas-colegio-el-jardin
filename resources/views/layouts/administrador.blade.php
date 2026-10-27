@@ -4,16 +4,16 @@
 @section('title', 'Administración')
 @section('role', 'Administrador')
 @section('module-title', 'Panel de Administración')
-@section('dashboard-url', url('/administrador'))
+@section('dashboard-url', route('administrador.dashboard'))
 
 @section('sidebar-menu')
 
     <div class="atlas-nav-section">
         <span class="atlas-nav-heading">Principal</span>
 
-        <a href="{{ url('/administrador') }}"
-           class="atlas-nav-link {{ request()->is('administrador') ? 'active' : '' }}"
-           @if(request()->is('administrador')) aria-current="page" @endif>
+        <a href="{{ route('administrador.dashboard') }}"
+           class="atlas-nav-link {{ request()->routeIs('administrador.dashboard') ? 'active' : '' }}"
+           @if(request()->routeIs('administrador.dashboard')) aria-current="page" @endif>
             <i class="bi bi-grid-1x2"></i>
             <span>Dashboard</span>
         </a>
@@ -22,7 +22,8 @@
     <div class="atlas-nav-section">
         <span class="atlas-nav-heading">Administración del sistema</span>
 
-        <button type="button" class="atlas-nav-button"
+        <button type="button"
+                class="atlas-nav-button {{ request()->routeIs('administrador.usuarios.*') ? 'active' : '' }}"
                 data-atlas-submenu="admin-usuarios"
                 aria-controls="admin-usuarios"
                 aria-expanded="false">
@@ -32,8 +33,18 @@
         </button>
 
         <div class="atlas-nav-submenu" id="admin-usuarios" hidden>
-            <a href="#" class="atlas-nav-sublink">Listado de usuarios</a>
-            <a href="#" class="atlas-nav-sublink">Crear usuario</a>
+            <a href="{{ route('administrador.usuarios.index') }}"
+               class="atlas-nav-sublink {{ request()->routeIs('administrador.usuarios.index', 'administrador.usuarios.show') ? 'active' : '' }}"
+               @if(request()->routeIs('administrador.usuarios.index', 'administrador.usuarios.show')) aria-current="page" @endif>
+                Listado de usuarios
+            </a>
+
+            <a href="{{ route('administrador.usuarios.create') }}"
+               class="atlas-nav-sublink {{ request()->routeIs('administrador.usuarios.create') ? 'active' : '' }}"
+               @if(request()->routeIs('administrador.usuarios.create')) aria-current="page" @endif>
+                Crear usuario
+            </a>
+
             <a href="#" class="atlas-nav-sublink">Gestión de accesos</a>
         </div>
 
@@ -124,4 +135,5 @@
     </div>
 
 @endsection
+
 @include('layouts.partials.atlas-submenus')
