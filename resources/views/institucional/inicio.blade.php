@@ -3,6 +3,41 @@
 @section('title', 'Inicio')
 @section('description', 'Conoce el Colegio Mixto El Jardín, San Raymundo: nuestra comunidad educativa, actividades y formación académica.')
 
+
+@push('styles')
+<style>
+/* Mejoras exclusivas de la página de inicio; la barra superior no se modifica. */
+/* Escudo destacado, integrado en el primer slide y sin tarjetas de identidad. */
+.school-team { background: linear-gradient(180deg,#f4f8fd 0%,#fff 100%); }
+.school-team-intro { max-width: 780px; margin: 0 auto 35px; text-align: center; }
+.school-team-intro p { color: #5d7085; line-height: 1.8; margin-top: 14px; }
+.school-team-photo { margin: 0; overflow: hidden; background: #fff; border: 1px solid #dfe8f2; border-radius: 24px; box-shadow: 0 22px 55px rgba(20,45,77,.12); }
+.school-team-photo img { display: block; width: 100%; height: auto; object-fit: contain; }
+.school-team-photo figcaption { display: flex; align-items: center; gap: 12px; padding: 21px 28px; background: #fff; color: #183451; }
+.school-team-photo figcaption i { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: #e9f1fb; color: #174d85; font-size: 20px; flex-shrink: 0; }
+.school-team-photo figcaption strong { display: block; font-size: 16px; }
+.school-team-photo figcaption span { display: block; font-size: 13px; margin-top: 3px; color: #667b90; }
+@media(max-width: 767px) {
+ .school-team-photo figcaption { padding: 16px; }
+}
+
+.school-brand-ribbon {position:relative;background:linear-gradient(110deg,#fff 0%,#f5f8fc 100%);border-bottom:1px solid #e3eaf2}
+.school-brand-ribbon-inner {display:flex;align-items:center;justify-content:center;gap:32px;padding:24px 18px}
+.school-brand-ribbon img {width:clamp(110px,11vw,150px);height:auto;object-fit:contain;flex-shrink:0}
+.school-brand-ribbon span {font-size:11px;font-weight:800;letter-spacing:.17em;color:#b52242}
+.school-brand-ribbon h2 {font-size:clamp(24px,3vw,37px);font-weight:800;color:#102e54;margin:7px 0}
+.school-brand-ribbon p {color:#60748b;margin:0}
+.school-visit-button {display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#b92343;color:white!important;padding:14px 23px;border:0;border-radius:10px;font-weight:800;cursor:pointer;text-decoration:none;box-shadow:0 9px 24px rgba(185,35,67,.18)}
+.school-visit-button:hover {background:#981b37}
+.school-visit-modal .modal-content {border:0;border-radius:20px;overflow:hidden}
+.school-visit-modal .modal-header {background:#102e54;color:#fff;padding:22px 25px}
+.school-visit-modal .modal-body {padding:25px}
+.school-visit-modal .form-label {font-weight:700;font-size:13px;color:#234365}
+.school-visit-modal .form-control,.school-visit-modal .form-select {border-radius:9px;padding:11px;border-color:#d7e2ee}
+@media(max-width:600px){.school-brand-ribbon-inner{gap:16px;text-align:left}.school-brand-ribbon img{width:100px}.school-brand-ribbon h2{font-size:22px}}
+</style>
+@endpush
+
 @section('content')
 @php
     $slides = [
@@ -22,7 +57,7 @@
         <div class="carousel-inner">
             @foreach($slides as $index => $slide)
                 <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                    <div class="school-hero-slide" style="--slide-image: url('{{ asset($slide['image']) }}')">
+                    <div class="school-hero-slide " style="--slide-image: url('{{ asset($slide['image']) }}')">
                         <div class="container school-hero-container">
                             <div class="school-hero-copy">
                                 <span class="school-eyebrow school-eyebrow-light"><span class="school-eyebrow-line"></span>{{ $slide['eyebrow'] }}</span>
@@ -41,6 +76,12 @@
         <button class="carousel-control-prev school-hero-control" type="button" data-bs-target="#schoolHeroCarousel" data-bs-slide="prev"><span class="school-hero-arrow"><i class="bi bi-chevron-left" aria-hidden="true"></i></span><span class="visually-hidden">Anterior</span></button>
         <button class="carousel-control-next school-hero-control" type="button" data-bs-target="#schoolHeroCarousel" data-bs-slide="next"><span class="school-hero-arrow"><i class="bi bi-chevron-right" aria-hidden="true"></i></span><span class="visually-hidden">Siguiente</span></button>
     </div>
+</section>
+<section class="school-brand-ribbon" aria-label="Identidad institucional">
+ <div class="container school-brand-ribbon-inner">
+  <img src="{{ asset('images/institucional/logo-colegio.png') }}" alt="Escudo del Colegio Mixto El Jardín" width="150" height="150">
+  <div><span>IDENTIDAD INSTITUCIONAL</span><h2>Colegio Mixto El Jardín</h2><p>San Raymundo, Guatemala · Educación, comunidad y oportunidades para crecer.</p></div>
+ </div>
 </section>
 
 <section class="school-intro-band" aria-label="Valores de nuestra comunidad">
@@ -67,6 +108,20 @@
             <a href="#contacto" class="school-text-link">Conoce más sobre el colegio <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div></div>
+</section>
+
+<section id="equipo-docente" class="school-section school-team" aria-labelledby="school-team-title">
+    <div class="container">
+        <div class="school-team-intro">
+            <span class="school-eyebrow">NUESTRO EQUIPO DOCENTE</span>
+            <h2 id="school-team-title" class="school-heading">Personas que acompañan cada etapa del aprendizaje</h2>
+            <p>Conoce al equipo docente que forma parte de la comunidad educativa del Colegio Mixto El Jardín. Su labor es esencial en la formación y el acompañamiento de nuestros estudiantes.</p>
+        </div>
+        <figure class="school-team-photo">
+            <img src="{{ asset('images/institucional/personal/docentes-jardin.jpeg') }}" alt="Fotografía del equipo docente del Colegio Mixto El Jardín" loading="lazy" decoding="async">
+            <figcaption><i class="bi bi-people-fill" aria-hidden="true"></i><div><strong>Nuestro personal docente</strong><span>Colegio Mixto El Jardín · San Raymundo, Guatemala</span></div></figcaption>
+        </figure>
+    </div>
 </section>
 
 <section class="school-section school-why" aria-labelledby="why-title">
@@ -114,5 +169,44 @@
     </div></div>
 </section>
 
-<section id="contacto" class="school-section school-contact"><div class="container"><div class="school-contact-panel"><div><span class="school-eyebrow">¿QUIERES CONOCERNOS?</span><h2>Tu próximo paso puede comenzar aquí.</h2><p>Comunícate con el Colegio Mixto El Jardín para conocer más sobre nuestra institución y sus procesos de inscripción.</p></div><div class="school-contact-action"><span><i class="bi bi-geo-alt" aria-hidden="true"></i> San Raymundo, Guatemala</span><span class="school-contact-pending">Los medios oficiales de contacto se publicarán próximamente.</span></div></div></div></section>
+<section id="contacto" class="school-section school-contact"><div class="container"><div class="school-contact-panel"><div><span class="school-eyebrow">¿QUIERES CONOCERNOS?</span><h2>Tu próximo paso puede comenzar aquí.</h2><p>Comunícate con el Colegio Mixto El Jardín para conocer más sobre nuestra institución y sus procesos de inscripción.</p></div><div class="school-contact-action"><span><i class="bi bi-geo-alt" aria-hidden="true"></i> San Raymundo, Guatemala</span><button type="button" class="school-visit-button" data-bs-toggle="modal" data-bs-target="#modalAgendaVisita"><i class="bi bi-calendar-plus"></i> Agendar cita</button></div></div></div></section>
+
+<div class="modal fade school-visit-modal" id="modalAgendaVisita" tabindex="-1" aria-labelledby="modalAgendaVisitaTitulo" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+  <div class="modal-header"><div><h2 class="modal-title fs-5" id="modalAgendaVisitaTitulo">Agendar una visita</h2><small>Colegio Mixto El Jardín · Citas de una hora</small></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+  <form action="{{ route('visitas.publicas.store') }}" method="POST" id="formAgendaVisita">@csrf
+   <div class="modal-body"><div class="row g-3">
+    <div class="col-md-6"><label for="visitaNombre" class="form-label">Nombre completo *</label><input id="visitaNombre" name="nombre_visitante" class="form-control" maxlength="160" required value="{{ old('nombre_visitante') }}"></div>
+    <div class="col-md-6"><label for="visitaTelefono" class="form-label">Teléfono *</label><input id="visitaTelefono" name="telefono" class="form-control" maxlength="30" required value="{{ old('telefono') }}"></div>
+    <div class="col-md-6"><label for="visitaCorreo" class="form-label">Correo (opcional)</label><input id="visitaCorreo" type="email" name="correo" class="form-control" maxlength="190" value="{{ old('correo') }}"></div>
+    <div class="col-md-6"><label for="visitaMotivo" class="form-label">Motivo *</label><select id="visitaMotivo" name="motivo" class="form-select" required><option value="">Seleccionar...</option><option value="Información de inscripción">Información de inscripción</option><option value="Visita al colegio">Visita al colegio</option><option value="Consulta institucional">Consulta institucional</option><option value="Otro">Otro</option></select></div>
+    <div class="col-md-6"><label for="visitaFecha" class="form-label">Fecha preferida *</label><input id="visitaFecha" type="date" name="fecha" class="form-control" min="{{ now()->addDay()->toDateString() }}" required></div>
+    <div class="col-md-6"><label for="visitaHora" class="form-label">Horario disponible *</label><select id="visitaHora" name="hora_inicio" class="form-select" required disabled><option value="">Primero seleccione una fecha</option></select></div>
+    <div class="col-12"><label for="visitaNotas" class="form-label">Observaciones (opcional)</label><textarea id="visitaNotas" name="observaciones" class="form-control" rows="2" maxlength="1000"></textarea></div>
+    <div class="col-12"><div id="visitaDisponibilidad" class="small text-secondary" role="status">Las solicitudes se registran como pendientes y reservan el horario seleccionado hasta que el colegio las gestione.</div></div>
+   </div></div>
+   <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="school-visit-button">Solicitar visita</button></div>
+  </form>
+ </div></div>
+</div>
+@if(session('visita_ok'))<div class="container my-3"><div class="alert alert-success" role="alert">{{ session('visita_ok') }}</div></div>@endif
+@if($errors->any())<div class="container my-3"><div class="alert alert-danger" role="alert">{{ $errors->first() }}</div></div>@endif
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const fecha=document.getElementById('visitaFecha'), hora=document.getElementById('visitaHora'), aviso=document.getElementById('visitaDisponibilidad');
+ if(!fecha||!hora)return;
+ fecha.addEventListener('change',async()=>{
+  hora.disabled=true;hora.innerHTML='<option value="">Consultando...</option>';
+  if(!fecha.value)return;
+  try{const url=new URL(@json(route('visitas.publicas.disponibilidad')),window.location.origin);url.searchParams.set('fecha',fecha.value);
+   const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error();
+   const data=await response.json();hora.innerHTML='<option value="">Seleccionar horario</option>';
+   for(const slot of data.horarios){const option=document.createElement('option');option.value=slot.inicio;option.textContent=slot.etiqueta;hora.append(option)}
+   hora.disabled=data.horarios.length===0;aviso.textContent=data.horarios.length?'Seleccione uno de los horarios disponibles.':'No hay horarios disponibles para esta fecha.';
+  }catch(e){hora.innerHTML='<option value="">No fue posible consultar horarios</option>';aviso.textContent='Intente nuevamente.'}
+ });
+ @if($errors->any())new bootstrap.Modal(document.getElementById('modalAgendaVisita')).show();@endif
+});
+</script>
+
 @endsection

@@ -153,6 +153,18 @@
 
                         <li class="nav-item">
                             <a
+                                class="nav-link {{ request()->routeIs('institucional.preguntas-frecuentes') ? 'active' : '' }}"
+                                href="{{ route('institucional.preguntas-frecuentes') }}"
+                                @if(request()->routeIs('institucional.preguntas-frecuentes'))
+                                    aria-current="page"
+                                @endif
+                            >
+                                Preguntas frecuentes
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a
                                 class="nav-link {{ request()->routeIs('institucional.contacto') ? 'active' : '' }}"
                                 href="{{ route('institucional.contacto') }}"
                                 @if(request()->routeIs('institucional.contacto'))
@@ -164,10 +176,7 @@
                         </li>
 
                         <li class="nav-item institutional-atlas-item">
-                            <span
-                                class="btn btn-atlas-access"
-                                title="Plataforma ATLAS en desarrollo"
-                                aria-label="Portal ATLAS, próximamente disponible">
+                            <div class="btn btn-atlas-access">
 
 
                                     <a href="{{ route('login') }}" class="btn-portal-atlas">
@@ -183,7 +192,7 @@
                                     </a>
 
 
-                            </span>
+                            </div>
                         </li>
 
                     </ul>
@@ -277,6 +286,12 @@
                         <li>
                             <a href="{{ route('institucional.noticias') }}">
                                 Noticias y actividades
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('institucional.preguntas-frecuentes') }}">
+                                Preguntas frecuentes
                             </a>
                         </li>
 

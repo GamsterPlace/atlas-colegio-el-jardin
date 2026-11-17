@@ -237,6 +237,32 @@
                         ],
                     ],
                 ],
+                [
+                    'id' => 'direccion-preguntas-frecuentes',
+                    'titulo' => 'Preguntas frecuentes',
+                    'icono' => 'bi-question-circle',
+                    'opciones' => [
+                        [
+                            'titulo' => 'Gestionar preguntas',
+                            'ruta' => 'direccion.preguntas-frecuentes.index',
+                        ],
+                        [
+                            'titulo' => 'Nueva pregunta',
+                            'ruta' => 'direccion.preguntas-frecuentes.create',
+                        ],
+                    ],
+                ],
+                [
+                    'id' => 'direccion-visitas',
+                    'titulo' => 'Agenda de visitas',
+                    'icono' => 'bi-calendar2-check',
+                    'opciones' => [
+                        [
+                            'titulo' => 'Gestionar visitas',
+                            'ruta' => 'direccion.visitas.index',
+                        ],
+                    ],
+                ],
             ],
         ],
         [

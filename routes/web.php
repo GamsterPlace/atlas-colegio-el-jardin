@@ -3,15 +3,21 @@
 
 use Illuminate\Support\Facades\Route;
 
+
+use App\Http\Controllers\Institucional\AgendaVisitaController as AgendaPublicaController;
 use App\Http\Controllers\Institucional\SitioWebController;
+use App\Http\Controllers\Institucional\PreguntaFrecuenteController as PreguntaFrecuentePublicaController;
+use App\Http\Controllers\Direccion\PreguntaFrecuenteController as PreguntaFrecuenteDireccionController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\ComunicadoRecibidoController;
-use App\Http\Controllers\Direccion\ComunicadoController;
+
+
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SeleccionRolController;
 use App\Http\Controllers\Auth\CambioPasswordObligatorioController;
 
+use App\Http\Controllers\Direccion\ComunicadoController;
 use App\Http\Controllers\Direccion\DashboardController;
 use App\Http\Controllers\Direccion\EstudianteController;
 use App\Http\Controllers\Direccion\DocenteController;
@@ -27,9 +33,17 @@ use App\Http\Controllers\Direccion\RestriccionHorarioController;
 use App\Http\Controllers\Direccion\HorarioAcademicoController;
 use App\Http\Controllers\Direccion\AsistenciaConsultaController;
 use App\Http\Controllers\Direccion\MovimientoInventarioController;
+use App\Http\Controllers\Direccion\AgendaVisitaController as AgendaGestionController;
+
+
 
 use App\Http\Controllers\Asistencia\RegistroController as AsistenciaRegistroController;
+
+
 use App\Http\Controllers\Docente\HorarioController as HorarioDocenteController;
+
+
+
 use App\Http\Controllers\PadreFamilia\HorarioController as HorarioPadreController;
 
 use App\Support\AccesoRoles;
@@ -63,6 +77,24 @@ Route::controller(SitioWebController::class)
         Route::get('/contacto', 'contacto')
             ->name('institucional.contacto');
     });
+
+Route::get('/preguntas-frecuentes', [PreguntaFrecuentePublicaController::class, 'index'])
+    ->name('institucional.preguntas-frecuentes');
+
+    Route::prefix('agenda-visitas')
+        ->name('visitas.publicas.')
+        ->middleware('throttle:20,1')
+        ->controller(AgendaPublicaController::class)
+        ->group(function () {
+
+            Route::get('/disponibilidad', 'disponibilidad')
+                ->name('disponibilidad');
+
+            Route::post('/solicitar', 'store')
+                ->name('store');
+        });
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -846,6 +878,22 @@ Route::middleware([
             |--------------------------------------------------------------------------
             */
 
+            /* Preguntas frecuentes - Gestión exclusiva de Dirección */
+            Route::prefix('preguntas-frecuentes')
+                ->name('preguntas-frecuentes.')
+                ->controller(PreguntaFrecuenteDireccionController::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::get('/crear', 'create')->name('create');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('/{preguntaFrecuente}/editar', 'edit')
+                        ->whereNumber('preguntaFrecuente')->name('edit');
+                    Route::put('/{preguntaFrecuente}', 'update')
+                        ->whereNumber('preguntaFrecuente')->name('update');
+                    Route::delete('/{preguntaFrecuente}', 'destroy')
+                        ->whereNumber('preguntaFrecuente')->name('destroy');
+                });
+
             /* Noticias institucionales - Direccion */
             Route::prefix('publicaciones')
                 ->name('publicaciones.')
@@ -906,6 +954,20 @@ Route::middleware([
 
                     Route::get('/{comunicado}', 'show')
                         ->whereNumber('comunicado')->name('show');
+                });
+
+
+                Route::prefix('visitas')
+                ->name('visitas.')
+                ->controller(AgendaGestionController::class)
+                ->group(function () {
+
+                    Route::get('/', 'index')
+                        ->name('index');
+
+                    Route::patch('/{cita}', 'actualizar')
+                        ->whereNumber('cita')
+                        ->name('actualizar');
                 });
 
         });
@@ -989,6 +1051,20 @@ Route::middleware([
                 '/dashboard',
                 'secretaria.dashboard'
             )->name('dashboard');
+
+            Route::prefix('visitas')
+            ->name('visitas.')
+            ->controller(AgendaGestionController::class)
+            ->group(function () {
+
+                Route::get('/', 'index')
+                    ->name('index');
+
+                Route::patch('/{cita}', 'actualizar')
+                    ->whereNumber('cita')
+                    ->name('actualizar');
+            });
+
         });
 
     /*
